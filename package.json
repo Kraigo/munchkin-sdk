@@ -1,0 +1,16 @@
+{
+    "main": "lib/index",
+    "types": "lib/index",
+    "scripts": {
+        "start": "npm run build:live",
+        "start:dev": "ts-node src/main.ts",
+        "build": "tsc -p .",
+        "build:live": "nodemon --watch 'src/**/*.ts' --exec ts-node src/main.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^10.12.18",
+        "nodemon": "^1.18.9",
+        "ts-node": "^7.0.1",
+        "typescript": "^3.2.4"
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "esModuleInterop": true,
+        "outDir": "./dist",
+        "sourceMap": true,
+        "lib": ["es6", "dom"],
+        "baseUrl": "src",
+        "paths": {
+            "common": ["common/*"],
+            "monsters": ["cards/monsters/*"],
+            "curses": ["cards/curses/*"]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}
