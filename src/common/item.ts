@@ -10,7 +10,8 @@ export enum Equipment {
 }
 
 export class Item extends Card {
-    bonus: number;
+    bonus: number = 0;
+    isBig: boolean = false;
     equiped: boolean = false;
 
     equipFor?: Equipment;
@@ -21,6 +22,7 @@ export class Item extends Card {
 
     combatBonus(player: Player) {
         return this.bonus;
+        // TODO: only if player can enquip this
     }
 
     canEnquip(player: Player) {

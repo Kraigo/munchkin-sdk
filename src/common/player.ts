@@ -48,20 +48,17 @@ export class Player {
         this.body = new PlayerBody(this);
     }
 
-    get combatStrength() {
+    get bonuses() {
         const itemsBonus = this.cardsInPlay
             .filter(i => i instanceof Item)
             .map(i => <Item>i)
             .reduce((cur, i) => cur + i.combatBonus(this), 0);
-
-        return this.level + itemsBonus;
+        return itemsBonus;
     }
 
     get maxCardsOnHand() {
         return 5;
     }
-    
-
 
     gotUpLevel(num = 1) {
         this.level += num;

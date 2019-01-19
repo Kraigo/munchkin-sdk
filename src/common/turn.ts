@@ -1,33 +1,31 @@
-import { Board } from "./board";
+import { Board, BoardEvent } from "./board";
 import { Monster } from "./monster";
 import { Player } from "./player";
 import { Choice } from "./choice"
 import { Curse } from "./curse";
 import { CardDeck } from "./card";
+import { Combat } from "./combat";
 
 export class Turn {
-    currentStep: number = 0;
-    wasCombat: boolean = false;
+    phase: number = 0;
+    combat: Combat;
+    finished: boolean = false;
 
 
     constructor(
-        private board: Board) {
-
-    }
-
-    get currentPlayer(): Player {
-        return this.board.currentPlayer;
-    }
+        private board: Board,
+        private player: Player
+    ) {}
 
     next() {
-        switch(this.currentStep) {
+        switch(this.phase) {
             case 0: {
                 this.kickOpenTheDoor();
-                this.currentStep ++;
+                this.phase ++;
                 break;
             }
             case 1: {
-                if (!this.wasCombat && this.currentPlayer.canLookForTrouble()) {
+                if (!this.combat && this.player.canLookForTrouble()) {
                     let choice = Choice.create()
                         .add({
                             title: 'Look for Trouble',
@@ -37,7 +35,7 @@ export class Turn {
                             title: 'Loot the Room',
                             callback: this.lootTheRoom                      
                         });
-                    this.currentPlayer.makeChoice(choice);
+                    this.player.makeChoice(choice);
                 } else {
                     this.lootTheRoom();
                 }
@@ -48,6 +46,8 @@ export class Turn {
                 break;
             }
         }
+
+        this.board.onChange.fire(BoardEvent.NEXT_PHASE);
     }
 
     kickOpenTheDoor() {
@@ -55,32 +55,36 @@ export class Turn {
         
         switch (true) {
             case (card instanceof Monster): {
-                this.board.combat(<Monster>card, this.currentPlayer);
-                this.wasCombat = true;
+                this.fight(this.player, <Monster>card);
                 break;
             }
             case card instanceof Curse: {
-                this.board.curse(<Curse>card, this.currentPlayer);
+                this.board.curse(this.player, <Curse>card);
                 break;
             }
             default: {
-                this.board.takeCard(card, this.currentPlayer.cardsInHand);
+                this.board.takeCard(card, this.player.cardsInHand);
+                this.finished = true;
                 break;
             }
         }
     }
 
+    fight(player: Player, monster: Monster) {
+        this.combat = new Combat(player, monster);
+    }
+
     lootTheRoom() {
-        return this.currentPlayer;
+        return this.player;
     }
 
     lookForTrouble() {
-        return this.currentPlayer;
+        return this.player;
     }
 
     charity() {
-        if (this.currentPlayer.cardsInHand.length > this.currentPlayer.maxCardsOnHand) {
-            this.currentPlayer.cardsInHand.splice(0, this.currentPlayer.maxCardsOnHand)
+        if (this.player.cardsInHand.length > this.player.maxCardsOnHand) {
+            this.player.cardsInHand.splice(0, this.player.maxCardsOnHand)
         }
     }
 }

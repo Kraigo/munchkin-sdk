@@ -4,19 +4,27 @@ import { Turn } from "./turn";
 import { Monster } from "./monster";
 import { Curse } from "./curse";
 import { shuffle, logger } from "./utils";
+import { Emitter } from "./emitter";
+import { Combat } from "./combat";
 
+export enum BoardEvent {
+    START_GAME,
+    ERROR,
+    NEXT_TURN,
+    NEXT_PHASE
+}
 export class Board {
-    players: Player[];
+    players: Player[] = [];
     currentPlayer: Player;
     currentTurn: Turn;
 
-    deck: Card[];
-    discard: Card[];
-    play: Card[];
+    deck: Card[] = [];
+    discard: Card[] = [];
+    play: Card[] = [];
+
+    onChange: Emitter<BoardEvent> = new Emitter<BoardEvent>();
 
     constructor() {
-        this.deck = [];
-        this.discard = [];
     }
 
     private moveCard(card: Card, fromCollection: Card[], toCollection: Card[]) {
@@ -25,15 +33,15 @@ export class Board {
         toCollection.push(card);
     }
 
-    get firstPlayer() {
+    private get firstPlayer() {
         const round = this.players.map(p => this.rollDice());
         const max = Math.max.call(null, round);
         const index = round.indexOf(max);
         return this.players[index];
     }
 
-    get nextPlayer() {
-        const index = this.players.indexOf(this.currentPlayer);
+    private get nextPlayer() {
+        const index = this.players.indexOf(this.currentPlayer) || -1;
         let nextIndex = index + 1;        
         if ( nextIndex >= this.players.length) {
             nextIndex = 0;
@@ -43,20 +51,18 @@ export class Board {
 
     startGame() {
         if (!(this.players && this.players.length >= 2)) {
-            throw new Error('Need more player (2 minimum)')
+            throw Error('Need more player (2 minimum)');
         }
-
-        logger("Game started!");
-        this.nextTurn();
+        this.onChange.fire(BoardEvent.START_GAME);
     }
 
-    curse(curse: Curse, player: Player) {
+    curse(player: Player, curse: Curse, ) {
         curse.effect(player, this);
     }
 
-    combat(monster: Monster, player: Player) {
-        
-    }
+    // fight(player: Player, monster: Monster,) {
+    //     this.combat = new Combat([player], [monster]);
+    // }
 
     openDeck(deck: CardDeck) {
         let cards = this.deck.filter(c => c.deck === deck);
@@ -96,10 +102,13 @@ export class Board {
     }
 
     nextTurn() {
-        this.currentPlayer = this.currentPlayer
-            ? this.nextPlayer
-            : this.firstPlayer;
+        if (this.currentTurn && !this.currentTurn.finished) {
+            throw Error('Turn doesn\'t finished');
+        }
+
+        this.currentPlayer = this.nextPlayer;
             
-        this.currentTurn = new Turn(this);
+        this.currentTurn = new Turn(this, this.currentPlayer);
+        this.onChange.fire(BoardEvent.NEXT_TURN, this.currentPlayer);
     }
 }
