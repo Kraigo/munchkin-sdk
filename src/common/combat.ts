@@ -1,7 +1,8 @@
 import { Monster } from "./monster";
-import { Player } from "./player";
+import { Player, PlayerEvent } from "./player";
 import { Card } from "./card";
 import { Shot } from "./shot";
+import { Choice, ChoiceAction } from "./choice";
 
 export class Combat {
     public players: Player[] = [];
@@ -10,7 +11,40 @@ export class Combat {
 
     constructor(player: Player, monster: Monster) {   
         this.players.push(player);
-        this.monsterSide.push(<Card>monster);  
+        this.monsterSide.push(<Card>monster);
+        
+        this.fireChoices();      
+    }
+
+    playPlayerSide(card: Card) {
+        this.playerSide.push(card);
+        this.fireChoices(); 
+    }
+    playMonsterSide(card: Card) {
+        this.monsterSide.push(card);
+        this.fireChoices();
+    }
+
+    fireChoices() {
+        this.players.forEach(player => {
+            const choice = new Choice();
+
+            if (this.canPlayersWin) {
+                choice.add({
+                    action: ChoiceAction.COMBAT_WIN
+                })
+            } else {
+                choice.add({
+                    action: ChoiceAction.COMBAT_RUN
+                })
+            }
+
+            player.onChoice.fire(PlayerEvent.COMBAT, choice);
+        })
+    }
+
+    get canPlayersWin() {
+        return this.playerSideCombatStrength > this.monsterSideCombatStrength;
     }
 
     get playerSideCombatStrength() {

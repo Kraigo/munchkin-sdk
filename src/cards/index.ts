@@ -1,12 +1,9 @@
-import { PixelMonster } from "./monsters/pixel.monster";
-import { BugMonster } from "./monsters/bug.monster.";
-import { RockCurse } from "./curses/rock.curse";
+/* Monsters */
+export * from "./monsters/pixel.monster";
+export * from "./monsters/bug.monster";
 
+/* Curses */
+export * from "./curses/rock.curse";
 
-export default [
-    new PixelMonster(),
-    new BugMonster(),
-
-
-    new RockCurse()
-]
+/* Shots */
+export * from './shots/bomb.shot';

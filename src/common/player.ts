@@ -3,10 +3,15 @@ import { Item } from "./item";
 import { Monster } from "./monster";
 import { Choice } from "./choice";
 import { logger } from "./utils";
+import { Emitter } from "./emitter";
 
 enum Gender {
     MALE,
     FEMALE
+}
+
+export enum PlayerEvent {
+    COMBAT
 }
 
 export interface PlayerOptions {
@@ -33,12 +38,13 @@ export class PlayerBody {
 export class Player {
     public name: string;
     public gender: Gender;
-    public level: number;
+    public level: number = 1;
 
-    public cardsInHand: Card[];
-    public cardsInPlay: Card[];
+    public cardsInHand: Card[] = [];
+    public cardsInPlay: Card[] = [];
 
     public body: PlayerBody;
+    public onChoice: Emitter<PlayerEvent> = new Emitter<PlayerEvent>();
 
     // constructor(...init: Partial<Player>[]) {
     //     Object.assign(this, ...init);

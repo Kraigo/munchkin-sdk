@@ -1,5 +1,6 @@
 export * from './board';
 export * from './card';
+export * from './choice';
 export * from './combat';
 export * from './curse';
 export * from './emitter';

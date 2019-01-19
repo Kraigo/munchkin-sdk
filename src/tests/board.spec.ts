@@ -1,13 +1,17 @@
 import { Board, Player, PlayerAI, BoardEvent } from "../common";
-
-import cards from '../cards';
+import { PixelMonster, BugMonster, RockCurse } from "../cards";
 
 describe('Board', () => {
     const board = new Board();
     const firstPlayer = new Player({name: 'Player1'});
     const secondPlayer = new PlayerAI();
 
-    board.deck = cards;
+    board.deck = [        
+        new PixelMonster(),
+        new BugMonster(),
+
+        new RockCurse()
+    ];
 
     board.players = [
         firstPlayer,

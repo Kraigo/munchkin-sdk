@@ -1,9 +1,16 @@
+export enum ChoiceAction {
+    COMBAT_RUN,
+    COMBAT_WIN
+}
 export interface ChoiceOption {
-    title: string;
-    callback: Function;
+    action: ChoiceAction
 }
 
 export class Choice {
+
+    constructor() {
+    }
+
     public options: ChoiceOption[] = [];
 
     public add(option: ChoiceOption) {
