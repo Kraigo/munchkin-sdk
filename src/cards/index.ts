@@ -2,14 +2,20 @@
 import { Card } from "./../common";
 
 /* Monsters */
-import { PixelMonster } from "./monsters/pixel.monster";
-import { BugMonster } from "./monsters/bug.monster";
+import {
+    PixelMonster,
+    BugMonster
+} from "./monsters";
 
 /* Curses */
-import { RockCurse } from "./curses/rock.curse";
+import {
+    RockCurse
+} from "./curses";
 
 /* Shots */
-import { BombShot } from './shots/bomb.shot';
+import {
+    BombShot
+} from './shots';
 
 export const cards: Card[] = [
     new PixelMonster,

@@ -37,5 +37,12 @@ describe('Board', () => {
         }
     })
 
+    
+    test('roll dice random', () => {
+        const randomNumbers = Array.from({ length: 10 }, () => board.rollDice());
+        const allSame = randomNumbers.every(n => n === randomNumbers[0]);
+        expect(allSame).toBeFalsy();
+    })
+
 
 })
