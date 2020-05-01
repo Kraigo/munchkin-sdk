@@ -1,7 +1,7 @@
 import { Board, BoardEvent } from "./board";
 import { Monster } from "./monster";
 import { Player } from "./player";
-import { Choice } from "./choice"
+import { Choice, ChoiceAction } from "./choice"
 import { Curse } from "./curse";
 import { CardDeck } from "./card";
 import { Combat } from "./combat";
@@ -28,12 +28,12 @@ export class Turn {
                 if (!this.combat && this.player.canLookForTrouble()) {
                     let choice = Choice.create()
                         .add({
-                            title: 'Look for Trouble',
-                            callback: this.lookForTrouble
+                            // title: 'Look for Trouble',
+                            action: ChoiceAction.LOOK_FOR_TROUBLE
                         })
                         .add({
-                            title: 'Loot the Room',
-                            callback: this.lootTheRoom                      
+                            // title: 'Loot the Room',
+                            action: ChoiceAction.LOOT_THE_ROOM                    
                         });
                     this.player.makeChoice(choice);
                 } else {

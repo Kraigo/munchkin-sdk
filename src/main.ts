@@ -2,7 +2,7 @@ import { Board } from "./common/board";
 import { Player } from "./common/player";
 import { PlayerAI } from "./common/player-ai";
 
-import cards from './cards/index';
+import { cards } from './cards/index';
 
 (function main() {
 

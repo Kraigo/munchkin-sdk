@@ -1,6 +1,6 @@
 import { Player, PlayerEvent, Combat, Choice, ChoiceAction } from "../common";
 import { PixelMonster } from "../cards/monsters/pixel.monster";
-import { BombShot } from '../cards';
+import { BombShot } from '../cards/shots/bomb.shot';
 
 describe("Combat", () => {
     const player = new Player();

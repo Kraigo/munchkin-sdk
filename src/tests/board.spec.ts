@@ -1,5 +1,7 @@
 import { Board, Player, PlayerAI, BoardEvent } from "../common";
-import { PixelMonster, BugMonster, RockCurse } from "../cards";
+import { PixelMonster } from "../cards/monsters/pixel.monster";
+import { BugMonster } from "../cards/monsters/bug.monster";
+import { RockCurse } from "../cards/curses/rock.curse";
 
 describe('Board', () => {
     const board = new Board();

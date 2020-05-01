@@ -1,9 +1,12 @@
 export enum ChoiceAction {
     COMBAT_RUN,
-    COMBAT_WIN
+    COMBAT_WIN,
+    LOOK_FOR_TROUBLE,
+    LOOT_THE_ROOM
 }
 export interface ChoiceOption {
-    action: ChoiceAction
+    // title: string;
+    action: ChoiceAction;
 }
 
 export class Choice {
