@@ -18,6 +18,4 @@ import { UIConsole } from "./ui";
     ]
     board.startGame();
 
-
-
 })();
