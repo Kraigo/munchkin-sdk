@@ -29,13 +29,8 @@ export class UIConsole {
 
         switch(event) {
             case BoardEvent.START_GAME: {
-                this.createQuestion(
-                    'Lets start the game. Press enter',                    
-                    () => {
-                        this.board.nextTurn();
-                        return true
-                    }
-                )
+                const message = 'Lets start the game. Press enter'
+                this.createMessage(message, this.onStartGame.bind(this));
                 break;
             }
             case BoardEvent.NEXT_TURN: {
@@ -43,28 +38,50 @@ export class UIConsole {
                 console.log(`Current Player: ${this.board.currentPlayer.name}`);
 
                 if (player instanceof Player) {
-                    this.createQuestion(
-                        `Make a choice:\n`
-                        + `${UIPlayerChoice.KICK_THE_DOOR} - Kick the door`,
-                        this.onPlayChoice
-                    )
+                    const message = `Make a choice:\n`
+                        + `${UIPlayerChoice.KICK_THE_DOOR} - Kick the door`;
+
+                    this.createChoice(UIPlayerChoice, message, this.onPlayChoice.bind(this))
                 }
                 break;
             }
         }
-        // console.log('Board changed', event);
     }
 
     onPlayChoice(choice: UIPlayerChoice) {
         switch(choice) {
             case UIPlayerChoice.KICK_THE_DOOR: {
-                console.log('Kicked');
-                return true;
+                const turn = this.board.currentTurn;
+                turn.next();
+                break;
             }
 
             default:
-                return false;
+                break;
         }
+    }
+
+    onStartGame() {        
+        this.board.nextTurn();
+    }
+
+    createChoice(choice: {[key: string]: string}, question: string, callback: (result: string) => any) {
+        this.createQuestion(question, (result) => {
+            var values = Object.values(choice);                            
+            if (values.includes(result)) {
+                callback(result)
+                return true;
+            } else {
+                return false;
+            }
+        })
+    }
+
+    createMessage(question: string, callback: (result: string) => any) {
+        this.createQuestion(question, (result) => {
+            callback(result);
+            return true;
+        });
     }
 
     createQuestion(question: string, callback: (result: string) => boolean) {
