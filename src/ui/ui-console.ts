@@ -1,7 +1,7 @@
 import { Board, BoardEvent } from "../common/board";
-import { UILogger } from "./ui-logger";
+import { UILogger, UIMessage, UIFormatter } from "./core";
 import { createInterface, Interface } from 'readline'
-import { Player } from "../common";
+import { Player, CardType, Card } from "../common";
 
 enum UIPlayerChoice {
     KICK_THE_DOOR = '1'
@@ -10,7 +10,9 @@ enum UIPlayerChoice {
 export class UIConsole {
 
     private logger: UILogger;
-    private interface: Interface
+    private interface: Interface;
+    private ui: UIMessage;
+
     constructor(
         private board: Board
     ) {
@@ -23,14 +25,15 @@ export class UIConsole {
             output: process.stdout,
             terminal: false
         });
+
+        this.ui = new UIMessage(this.interface);
     }
 
     onBoardChange(event: BoardEvent) {
-
         switch(event) {
             case BoardEvent.START_GAME: {
-                const message = 'Lets start the game. Press enter'
-                this.createMessage(message, this.onStartGame.bind(this));
+                const message = 'Lets start the game. Press enter';
+                this.ui.message(message, this.onStartGame.bind(this));
                 break;
             }
             case BoardEvent.NEXT_TURN: {
@@ -41,8 +44,24 @@ export class UIConsole {
                     const message = `Make a choice:\n`
                         + `${UIPlayerChoice.KICK_THE_DOOR} - Kick the door`;
 
-                    this.createChoice(UIPlayerChoice, message, this.onPlayChoice.bind(this))
+                    this.ui.choice(UIPlayerChoice, message, this.onPlayChoice.bind(this))
                 }
+                break;
+            }
+            case BoardEvent.NEXT_PHASE: {
+                // const player = this.board.currentPlayer;
+                console.log("Card in game: ")
+                this.board.play.forEach((card) => {
+                    console.log(`-- ${card.name} [${UIFormatter.cardTypeName(card.cardType)}]`)
+                })
+
+                const player = this.board.currentPlayer;
+                console.log("You Cards: ")
+                player.cardsInHand.forEach((card) => {
+                    console.log(`-- ${card.name}  [${UIFormatter.cardTypeName(card.cardType)}]`)
+                })
+
+                // this.ui.choice()
                 break;
             }
         }
@@ -63,37 +82,5 @@ export class UIConsole {
 
     onStartGame() {        
         this.board.nextTurn();
-    }
-
-    createChoice(choice: {[key: string]: string}, question: string, callback: (result: string) => any) {
-        this.createQuestion(question, (result) => {
-            var values = Object.values(choice);                            
-            if (values.includes(result)) {
-                callback(result)
-                return true;
-            } else {
-                return false;
-            }
-        })
-    }
-
-    createMessage(question: string, callback: (result: string) => any) {
-        this.createQuestion(question, (result) => {
-            callback(result);
-            return true;
-        });
-    }
-
-    createQuestion(question: string, callback: (result: string) => boolean) {
-        this.interface.question(question + "\n", (result) => {
-            const finished = callback(result);
-            if (!finished) {
-                this.createQuestion.apply(this, Array.from(arguments));
-            };
-        });
-
-        // this.interface.on("close", function() {
-        //     console.log("\nBYE BYE !!!");
-        // });
     }
 }

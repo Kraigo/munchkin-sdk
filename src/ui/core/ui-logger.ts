@@ -1,4 +1,4 @@
-import { Board, BoardEvent, PlayerEvent } from "../common";
+import { Board, BoardEvent, PlayerEvent } from "../../common";
 
 export class UILogger {
     constructor(
