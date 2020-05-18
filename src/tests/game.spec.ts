@@ -81,6 +81,11 @@ describe('Game', () => {
                         expect(board.currentTurn.combat.playerSide.length).toBe(1);
                         expect(board.currentTurn.combat.monsterSide.length).toBe(1);
                     });
+
+                    describe('can', () => {
+                        expect(board.currentTurn.canRun()).toBeTruthy();
+                        expect(board.currentTurn.canKick()).toBeFalsy();
+                    })
                     break;
                 }
 
@@ -88,6 +93,11 @@ describe('Game', () => {
                     describe('opened card was Curse', () => {
                         expect(board.currentTurn.combat).toBeUndefined();
                     });
+
+                    describe('can', () => {
+                        expect(board.currentTurn.canRun()).toBeFalsy();
+                        expect(board.currentTurn.canKick()).toBeFalsy();
+                    })
                     break;
                 }
 

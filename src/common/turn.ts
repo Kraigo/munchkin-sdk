@@ -87,4 +87,17 @@ export class Turn {
             this.player.cardsInHand.splice(0, this.player.maxCardsOnHand)
         }
     }
+
+    canRun() {
+        return this.combat;
+    }
+
+    canKick() {
+        return this.phase = 0;
+    }
+
+    run() {
+        const dice = this.board.rollDice();
+        return dice > 4;
+    }
 }
