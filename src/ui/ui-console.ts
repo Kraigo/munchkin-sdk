@@ -70,7 +70,7 @@ export class UIConsole {
     onPlayChoice(choice: UIPlayerChoice) {
         switch(choice) {
             case UIPlayerChoice.KICK_THE_DOOR: {
-                const turn = this.board.currentTurn;
+                const turn = this.board.phase;
                 turn.next();
                 break;
             }
@@ -81,6 +81,6 @@ export class UIConsole {
     }
 
     onStartGame() {        
-        this.board.nextTurn();
+        this.board.nextRound();
     }
 }

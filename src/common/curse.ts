@@ -5,7 +5,7 @@ import { Board } from "./board";
 export class Curse extends Card {
 
     constructor() {
-        super(Card.Deck.DOOR, Card.CardType.CURSE);
+        super(Card.Deck.DOOR);
     }
 
     effect(player: Player, board: Board) {

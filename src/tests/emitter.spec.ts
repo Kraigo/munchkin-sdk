@@ -3,7 +3,7 @@ import { Emitter } from '../common/emitter';
 
 
 
-describe("Testing observable", () => {
+describe("Emitter", () => {
 
     enum TestEvent {
         FIRST
@@ -47,4 +47,20 @@ describe("Testing observable", () => {
         observable.fire(TestEvent.FIRST, data2);
         expect(handler).toBeCalledWith(TestEvent.FIRST, data2);
     });
+
+    test('filter', () => {
+        const handler = jest.fn();
+
+        observable.filter(t => t > 5).subscribe(handler);
+        
+        observable.fire(1);
+        observable.fire(2);
+        observable.fire(3);
+
+        expect(handler).toBeCalledTimes(0);
+        observable.fire(9);
+        observable.fire(8);
+        observable.fire(7);
+        expect(handler).toBeCalledTimes(3);
+    })
 })

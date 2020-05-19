@@ -6,23 +6,28 @@ import { Curse } from "./curse";
 import { shuffle, logger } from "./utils";
 import { Emitter } from "./emitter";
 import { Combat } from "./combat";
+import { Phase, PhaseAction } from "../common/phase";
+import { KickDoorPhase, CombatPhase, CursePhase } from "../phases";
 
 export enum BoardEvent {
     START_GAME,
     ERROR,
-    NEXT_TURN,
-    NEXT_PHASE
+    NEXT_PHASE,
+    CARD_PLAYED,
+    ROUND_FINISHED,
+    ROUND_STARTED
 }
 export class Board {
     players: Player[] = [];
     currentPlayer: Player;
-    currentTurn: Turn;
+    phase: Phase;
 
     deck: Card[] = [];
     discard: Card[] = [];
     play: Card[] = [];
 
-    onChange: Emitter<BoardEvent> = new Emitter<BoardEvent>();
+    onChange = new Emitter<BoardEvent>();
+    onAction = new Emitter<PhaseAction>();
 
     constructor() {
     }
@@ -74,8 +79,10 @@ export class Board {
 
         if (card) {
             this.moveCard(card, this.deck, this.play);
+            this.onChange.fire(BoardEvent.CARD_PLAYED, card);
+
+            return card;
         }
-        return card;
     }
 
     shuffleDiscard() {
@@ -101,14 +108,30 @@ export class Board {
         return Math.ceil(Math.random() * 6);
     }
 
-    nextTurn() {
-        if (this.currentTurn && !this.currentTurn.finished) {
-            throw Error('Turn doesn\'t finished');
+    nextRound() {
+        if (this.phase && !this.phase.finished) {
+            throw Error('Turn didn\'t finish');
         }
 
         this.currentPlayer = this.nextPlayer;
+        this.onChange.fire(BoardEvent.ROUND_STARTED, this.currentPlayer);
+
+        if (!this.phase) {
+            this.setPhase(new KickDoorPhase(this));
+            return;
+        }
             
-        this.currentTurn = new Turn(this, this.currentPlayer);
-        this.onChange.fire(BoardEvent.NEXT_TURN, this.currentPlayer);
+        // this.currentTurn = new Turn(this, this.currentPlayer);
+        // this.onChange.fire(BoardEvent.NEXT_TURN, this.currentPlayer);
+    }
+
+    finishRound() {
+        this.phase = null;
+        this.onChange.fire(BoardEvent.ROUND_FINISHED);
+    }
+
+    setPhase(phase: Phase) {
+        this.phase = phase;
+        this.onChange.fire(BoardEvent.NEXT_PHASE, phase);
     }
 }

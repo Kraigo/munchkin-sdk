@@ -17,7 +17,7 @@ export class Item extends Card {
     equipFor?: Equipment;
 
     constructor() {
-        super(Card.Deck.TREASURE, Card.CardType.ITEM);
+        super(Card.Deck.TREASURE);
     }
 
     combatBonus(player: Player) {

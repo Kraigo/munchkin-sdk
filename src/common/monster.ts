@@ -10,7 +10,7 @@ export class Monster extends Card {
 
 
     constructor() {
-        super(Card.Deck.DOOR, Card.CardType.MONSTER);
+        super(Card.Deck.DOOR);
     }
 
     wandering() {
