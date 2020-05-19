@@ -14,6 +14,7 @@ export enum BoardEvent {
     ERROR,
     NEXT_PHASE,
     CARD_PLAYED,
+    CARD_DRAWED,
     ROUND_FINISHED,
     ROUND_STARTED
 }
@@ -70,13 +71,17 @@ export class Board {
     //     this.combat = new Combat([player], [monster]);
     // }
 
-    openDeck(deck: CardDeck) {
+    getCardFromDeck(deck: CardDeck) {
         let cards = this.deck.filter(c => c.deck === deck);
         if (cards.length === 0) {
             this.shuffleDiscard();
             cards = this.deck.filter(c => c.deck === deck)          
         }
-        const card = cards.length > 0 ? cards[0] : null;
+        return cards.length > 0 ? cards[0] : null;
+    }
+
+    openDeck(deck: CardDeck) {
+        const card = this.getCardFromDeck(deck)
 
         if (card) {
             this.moveCard(card, this.deck, this.play);
@@ -84,6 +89,23 @@ export class Board {
 
             return card;
         }
+    }
+
+    drawDeck(player: Player, deck: CardDeck) {
+        const card = this.getCardFromDeck(deck);
+
+        if (card) {
+            this.moveCard(card, this.deck, player.cardsInHand);
+            return card;
+        }
+    }
+
+    get deckDoors() {
+        return this.deck.filter(c => c.deck === CardDeck.DOOR);
+    }
+
+    get deckTreasures() {
+        return this.deck.filter(c => c.deck === CardDeck.TREASURE);
     }
 
     shuffleDiscard() {

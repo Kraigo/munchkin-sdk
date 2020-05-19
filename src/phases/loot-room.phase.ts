@@ -1,5 +1,5 @@
 import { Phase } from "../common/phase";
-import { Choice } from "../common";
+import { Choice, CardDeck } from "../common";
 
 export class LootRoomPhase extends Phase {
 
@@ -7,7 +7,8 @@ export class LootRoomPhase extends Phase {
         .add({
             action: Choice.actions.DRAW_CARD,
             handle: () => {
+                this.board.drawDeck(this.board.currentPlayer, CardDeck.DOOR);
                 this.board.finishRound();
             }
-        });
+        })
 }
