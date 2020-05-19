@@ -1,5 +1,5 @@
 import { Phase } from "../common/phase";
-import { Board, Card } from "../common";
+import { Board, Card, Choice } from "../common";
 import { LootRoomPhase } from "./loot-room.phase";
 import { LookTroublePhase } from "./look-trouble.phase";
 
@@ -12,18 +12,17 @@ export class RoomSearchPhase extends Phase {
 
     actions = RoomSearchPhaseActions;
 
-    action() {
-        const action: any = null
-
-        switch (action) {
-            case RoomSearchPhaseActions.LOOT: {
-                this.board.setPhase(new LootRoomPhase(this.board));
-                break;
-            }
-            case RoomSearchPhaseActions.TROUBLE: {
+    choice = Choice.create()
+        .add({
+            action: Choice.actions.LOOK_TROUBLE,
+            handle: () => {
                 this.board.setPhase(new LookTroublePhase(this.board));
-                break;
             }
-        }
-    }
+        })
+        .add({
+            action: Choice.actions.LOOT_ROOM,
+            handle: () => {
+                this.board.setPhase(new LootRoomPhase(this.board));
+            }
+        })
 }

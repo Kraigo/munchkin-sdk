@@ -1,8 +1,13 @@
 import { Phase } from "../common/phase";
+import { Choice } from "../common";
 
 export class LootRoomPhase extends Phase {
 
-    action() {
-        this.board.finishRound();
-    }
+    choice = Choice.create()
+        .add({
+            action: Choice.actions.DRAW_CARD,
+            handle: () => {
+                this.board.finishRound();
+            }
+        });
 }

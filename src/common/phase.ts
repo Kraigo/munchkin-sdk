@@ -1,5 +1,6 @@
 import { Board } from "./board";
 import { CardDeck } from "./card";
+import { Choice, ChoiceAction } from "../common";
 
 export enum PhaseAction {
     RUN = 'run'
@@ -7,6 +8,7 @@ export enum PhaseAction {
 
 export class Phase {    
     public finished: boolean;
+    public choice: Choice;
 
     constructor(
         readonly board: Board
@@ -28,5 +30,7 @@ export class Phase {
         return false;
     }
 
-    action() {}
+    action(action: ChoiceAction) {
+        return this.choice.trigger(action)
+    }
 }

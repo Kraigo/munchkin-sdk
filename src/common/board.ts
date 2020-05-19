@@ -21,6 +21,7 @@ export class Board {
     players: Player[] = [];
     currentPlayer: Player;
     phase: Phase;
+    combat: Combat;
 
     deck: Card[] = [];
     discard: Card[] = [];
@@ -102,6 +103,12 @@ export class Board {
 
     takeCard(card: Card, toCollection: Card[]) {
         this.moveCard(card, this.play, toCollection);
+    }
+
+    
+
+    fight(player: Player, monster: Monster) {
+        this.combat = new Combat(player, monster);
     }
 
     rollDice() {
