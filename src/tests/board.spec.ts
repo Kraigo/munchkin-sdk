@@ -49,6 +49,22 @@ describe('Board', () => {
         expect(handler).toBeCalledTimes(2);
     })
 
+    test('next player', () => {
+        const b = new Board(); 
+        b.players = [
+            firstPlayer,
+            secondPlayer
+        ];
+        expect(b.currentPlayer).toBeUndefined();
+        b.startGame();
+        b.nextRound();
+        expect(b.currentPlayer).toBe(firstPlayer);
+        b.nextRound();
+        expect(b.currentPlayer).toBe(secondPlayer);
+        b.nextRound();
+        expect(b.currentPlayer).toBe(firstPlayer);
+    })
+
     
     test('roll dice random', () => {
         const randomNumbers = Array.from({ length: 10 }, () => board.rollDice());

@@ -49,12 +49,9 @@ export class Board {
     }
 
     private get nextPlayer() {
-        const index = this.players.indexOf(this.currentPlayer) || -1;
-        let nextIndex = index + 1;        
-        if ( nextIndex >= this.players.length) {
-            nextIndex = 0;
-        }
-        return this.players[nextIndex];
+        const index = this.players.indexOf(this.currentPlayer);
+        let nextIndex = index + 1;
+        return this.players[nextIndex] || this.players[0]
     }
 
     startGame() {
@@ -139,14 +136,14 @@ export class Board {
     rollDice() {
         const result = Math.ceil(Math.random() * 6);
         this.onChange.fire(BoardEvent.ROLL_DICE, result);
-        
+
         return result;
     }
 
     nextRound() {
-        if (this.phase && !this.phase.finished) {
-            throw Error('Turn didn\'t finish');
-        }
+        // if (this.phase && !this.phase.finished) {
+        //     throw Error('Turn didn\'t finish');
+        // }
 
         this.currentPlayer = this.nextPlayer;
         this.onChange.fire(BoardEvent.ROUND_STARTED, this.currentPlayer);
