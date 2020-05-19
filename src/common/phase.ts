@@ -14,22 +14,6 @@ export class Phase {
         readonly board: Board
     ) {}
 
-    canRun() {
-        return false;
-    }
-
-    canPlayCard() {
-        return false;
-    }
-
-    canDrawCard(deck: CardDeck) {
-        return false;
-    }
-
-    canOpenDoor() {
-        return false;
-    }
-
     action(action: ChoiceAction) {
         return this.choice.trigger(action)
     }

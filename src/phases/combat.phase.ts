@@ -1,13 +1,13 @@
 import { Phase } from "../common/phase";
-import { Board } from "../common";
+import { Board, Choice } from "../common";
+import { RunPhase } from "./run.phase";
 
 export class CombatPhase extends Phase {
-
-    canPlayCard() {
-        return true;
-    }
-
-    canRun() {
-        return true;
-    }
+    choice = Choice.create()
+        .add({
+            action: Choice.actions.COMBAT_RUN,
+            handle: () => {
+                this.board.setPhase(new RunPhase(this.board));
+            }
+        })
 }

@@ -1,4 +1,5 @@
-import { Board, BoardEvent, PlayerEvent } from "../../common";
+import { Board, BoardEvent } from "../../common/board";
+import { UIFormatter } from "./ui-formatter";
 
 export class UILogger {
     constructor(
@@ -6,22 +7,43 @@ export class UILogger {
     ) {
         this.board.onChange.subscribe(this.onBoardChange.bind(this));
 
-        for (let player of this.board.players) {
-            player.onChoice.subscribe(this.onPlayChoice.bind(this));
+        // for (let player of this.board.players) {
+        //     player.onChoice.subscribe(this.onPlayChoice.bind(this));
+        // }
+    }
+
+    onBoardChange(event: BoardEvent, options: any) {
+        const eventName = BoardEvent[event]; 
+
+        switch(event) {
+            case BoardEvent.ROUND_STARTED: {
+                this.log(`${eventName} : ${this.board.currentPlayer.name}`);
+                break;
+            }
+            case BoardEvent.NEXT_PHASE: {
+                this.log(`${eventName} : ${options.constructor.name}`);
+                break;
+            }
+            case BoardEvent.CARD_PLAYED: {
+                this.log(`${eventName} : ${options.name}`);
+                break;
+            }
+            case BoardEvent.ROLL_DICE: {
+                this.log(`${eventName} : ${options}`);
+                break;
+            }
+            default: {               
+                this.log(`${eventName}`);
+                break;
+            }
         }
     }
 
-    onBoardChange(event: BoardEvent) {
-        const eventName = BoardEvent[event];
-        
-        this.log(`Board Event : ${eventName}`);
-    }
+    // onPlayChoice(event: PlayerEvent) {
+    //     const eventName = PlayerEvent[event];
 
-    onPlayChoice(event: PlayerEvent) {
-        const eventName = PlayerEvent[event];
-
-        this.log(`Player Event : ${eventName}`);        
-    }
+    //     this.log(`Player Event : ${eventName}`);        
+    // }
 
     get now() {
         const date = new Date();

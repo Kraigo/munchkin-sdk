@@ -37,6 +37,18 @@ describe('Board', () => {
         }
     })
 
+    test('rool dice event', () => {        
+        const handler = jest.fn();
+        board.onChange
+            .filter(e => e === BoardEvent.ROLL_DICE)
+            .subscribe(handler);
+
+        board.rollDice();
+        board.rollDice();
+
+        expect(handler).toBeCalledTimes(2);
+    })
+
     
     test('roll dice random', () => {
         const randomNumbers = Array.from({ length: 10 }, () => board.rollDice());

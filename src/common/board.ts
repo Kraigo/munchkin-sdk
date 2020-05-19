@@ -16,7 +16,8 @@ export enum BoardEvent {
     CARD_PLAYED,
     CARD_DRAWED,
     ROUND_FINISHED,
-    ROUND_STARTED
+    ROUND_STARTED,
+    ROLL_DICE
 }
 export class Board {
     players: Player[] = [];
@@ -60,6 +61,8 @@ export class Board {
         if (!(this.players && this.players.length >= 2)) {
             throw Error('Need more player (2 minimum)');
         }
+        
+        shuffle(this.deck);
         this.onChange.fire(BoardEvent.START_GAME);
     }
 
@@ -134,7 +137,10 @@ export class Board {
     }
 
     rollDice() {
-        return Math.ceil(Math.random() * 6);
+        const result = Math.ceil(Math.random() * 6);
+        this.onChange.fire(BoardEvent.ROLL_DICE, result);
+        
+        return result;
     }
 
     nextRound() {

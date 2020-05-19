@@ -1,4 +1,5 @@
 import { Interface } from "readline";
+import { Choice, ChoiceAction } from "../../common";
 
 export class UIMessage {
     constructor(
@@ -7,11 +8,17 @@ export class UIMessage {
 
     }
 
-    choice(choice: {[key: string]: string}, question: string, callback: (result: string) => any) {
+    choice(choice: Choice, question: string, callback: (result: ChoiceAction) => any) {
+
+        question += '\n';
+        question += choice.options
+            .map((c, i) => `${i + 1} - ${ChoiceAction[c.action]}`)
+            .join('\n');
+
         this.createQuestion(question, (result) => {
-            var values = Object.values(choice);                            
-            if (values.includes(result)) {
-                callback(result)
+            const option = choice.options[Number(result) - 1];
+            if (option) {
+                callback(option.action);
                 return true;
             } else {
                 return false;

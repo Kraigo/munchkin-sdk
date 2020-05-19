@@ -4,7 +4,9 @@ export enum ChoiceAction {
     LOOK_TROUBLE,
     LOOT_ROOM,
     KICK_DOOR,
-    DRAW_CARD
+    DRAW_CARD,
+    ROLL_DICE,
+    APPLY_CARD
 }
 export interface ChoiceOption {
     // title: string;

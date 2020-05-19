@@ -12,3 +12,4 @@ export * from './shot';
 export * from './turn';
 export * from './utils';
 export * from './race';
+export * from './item';
