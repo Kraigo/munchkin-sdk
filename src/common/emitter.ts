@@ -1,7 +1,9 @@
+type EmitterSubscription<T> = (event: T, payload?: any) => void
+
 export class Emitter<T> {
     private handlers: Function[] = [];
 
-    subscribe(fn: Function): void {
+    subscribe(fn: EmitterSubscription<T>): void {
         this.handlers.push(fn);
     }
 
@@ -10,22 +12,26 @@ export class Emitter<T> {
             .filter(item => item != fn);
     }
 
-    fire(t: T, payload?: any) {
-        this.handlers.forEach(item => {
-            payload === undefined
-                ? item.call(null, t)
-                : item.call(null, t, payload)
-        });
+    fire(event: T, payload?: any) {
+        this.handlers.forEach((handler) =>
+            this.fireHandler(handler, event, payload));
     }
 
-    filter(filterFn: (t: T, payload?: any) => boolean) {
-        const emitter = Object.assign(new Emitter(), this);
+    fireHandler(handler: Function, event: T, payload?: any) {
+        payload === undefined
+            ? handler.call(null, event)
+            : handler.call(null, event, payload)
+    }
+
+    filter(filterFn: (event: T, payload?: any) => boolean) {
+        const emitter = Object.assign(new Emitter<T>(), this);
         const subscribeFn = emitter.subscribe;
 
         emitter.subscribe = (fn: Function) => {
-            subscribeFn.call(this, (t:T, payload?: any) => {
-                if (filterFn(t, payload)) {
-                    fn.call(null, t, payload);
+            subscribeFn.call(this, (event: T, payload?: any) => {
+                if (filterFn(event, payload)) {
+                    this.fireHandler(fn, event, payload);
+                    // fn.call(null, t, payload);
                 }
             })
         }
@@ -33,12 +39,30 @@ export class Emitter<T> {
     }
     
     mapData(mapFn: (payload?: any) => boolean) {
-        const emitter = Object.assign(new Emitter(), this);
+        const emitter = Object.assign(new Emitter<T>(), this);
         const subscribeFn = emitter.subscribe;
 
         emitter.subscribe = (fn: Function) => {
-            subscribeFn.call(this, (t:T, payload?: any) => {
-                fn.call(null, t, mapFn(payload));
+            subscribeFn.call(this, (event: T, payload?: any) => {
+                this.fireHandler(fn, event, mapFn(payload));
+            })
+        }
+        return emitter;
+    }
+    
+    merge<Y>(...emitters: Emitter<Y>[]) {
+        const emitter = Object.assign(new Emitter<T>(), this);
+        const subscribeFn = emitter.subscribe;
+        const target = [
+            subscribeFn,
+            ...emitters.map(e => e.subscribe)
+        ]
+
+        emitter.subscribe = (fn: Function ) => {
+            target.forEach((subscribe) => {
+                subscribe.call(this, (event: T, payload?: any) => {                    
+                    this.fireHandler(fn, event, payload);
+                });
             })
         }
         return emitter;

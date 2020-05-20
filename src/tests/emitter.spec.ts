@@ -7,6 +7,7 @@ describe("Emitter", () => {
 
     enum TestEvent {
         FIRST,
+        SECOND,
         FILTER,
         MAP
     };
@@ -97,5 +98,26 @@ describe("Emitter", () => {
         observable.fire(TestEvent.FIRST, eventDate);
 
         expect(handler).toBeCalledWith(TestEvent.FIRST, eventDate.test);
+    })
+
+    test('merge', () => {
+        const handler = jest.fn();
+
+        const firstEmitter = new Emitter<TestEvent>()
+            .filter((event) => event === TestEvent.FIRST);
+            
+        const secondEmitter = new Emitter<TestEvent>()
+            .filter((event) => event === TestEvent.SECOND);
+
+        const firstANDsecondEmitter = new Emitter<TestEvent>()
+            .merge(firstEmitter);
+
+        firstANDsecondEmitter.subscribe(handler);
+
+        firstANDsecondEmitter.fire(TestEvent.FIRST);
+        expect(handler).toBeCalledWith(TestEvent.FIRST);
+        firstANDsecondEmitter.fire(TestEvent.SECOND);
+        expect(handler).toBeCalledWith(TestEvent.SECOND);
+        expect(handler).toBeCalledTimes(2);
     })
 })
