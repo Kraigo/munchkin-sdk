@@ -1,8 +1,7 @@
 export class Emitter<T> {
     private handlers: Function[] = [];
-    public filters: ((t: T) => boolean)[] = [];
 
-    subscribe(fn: Function) {
+    subscribe(fn: Function): void {
         this.handlers.push(fn);
     }
 
@@ -12,18 +11,36 @@ export class Emitter<T> {
     }
 
     fire(t: T, payload?: any) {
-        if (this.filters.every(f => f(t))) {
-            this.handlers.forEach(item => {
-                payload === undefined
-                    ? item.call(null, t)
-                    : item.call(null, t, payload)
-            });
-        }
+        this.handlers.forEach(item => {
+            payload === undefined
+                ? item.call(null, t)
+                : item.call(null, t, payload)
+        });
     }
 
-    filter(fn: (t: T) => boolean) {
-        const emitter = Object.assign(new Emitter(), this)
-        emitter.filters.push(fn);
+    filter(filterFn: (t: T, payload?: any) => boolean) {
+        const emitter = Object.assign(new Emitter(), this);
+        const subscribeFn = emitter.subscribe;
+
+        emitter.subscribe = (fn: Function) => {
+            subscribeFn.call(this, (t:T, payload?: any) => {
+                if (filterFn(t, payload)) {
+                    fn.call(null, t, payload);
+                }
+            })
+        }
+        return emitter;
+    }
+    
+    mapData(mapFn: (payload?: any) => boolean) {
+        const emitter = Object.assign(new Emitter(), this);
+        const subscribeFn = emitter.subscribe;
+
+        emitter.subscribe = (fn: Function) => {
+            subscribeFn.call(this, (t:T, payload?: any) => {
+                fn.call(null, t, mapFn(payload));
+            })
+        }
         return emitter;
     }
 }

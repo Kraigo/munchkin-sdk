@@ -6,7 +6,9 @@ import { Emitter } from '../common/emitter';
 describe("Emitter", () => {
 
     enum TestEvent {
-        FIRST
+        FIRST,
+        FILTER,
+        MAP
     };
     const observable = new Emitter<TestEvent>();
 
@@ -51,16 +53,49 @@ describe("Emitter", () => {
     test('filter', () => {
         const handler = jest.fn();
 
-        observable.filter(t => t > 5).subscribe(handler);
+        observable.filter((event, payload) => payload > 5).subscribe(handler);
         
-        observable.fire(1);
-        observable.fire(2);
-        observable.fire(3);
+        observable.fire(TestEvent.FILTER, 1);
+        observable.fire(TestEvent.FILTER, 2);
+        observable.fire(TestEvent.FILTER, 3);
 
         expect(handler).toBeCalledTimes(0);
-        observable.fire(9);
-        observable.fire(8);
-        observable.fire(7);
+        observable.fire(TestEvent.FILTER, 9);
+        observable.fire(TestEvent.FILTER, 8);
+        observable.fire(TestEvent.FILTER, 7);
         expect(handler).toBeCalledTimes(3);
+    })
+
+    test('filter multi', () => {
+        const handler = jest.fn();
+
+        observable
+            .filter((event) => event === TestEvent.FILTER)
+            .filter((event, payload) => payload > 5)
+            .filter((event, payload) => payload < 10)
+            .subscribe(handler);
+        
+        observable.fire(TestEvent.FIRST, 1);
+        observable.fire(TestEvent.FIRST, 6);
+        observable.fire(TestEvent.FILTER, 1);
+
+        expect(handler).toBeCalledTimes(0);
+
+        observable.fire(TestEvent.FILTER, 6);
+
+        expect(handler).toBeCalledTimes(1);
+    })
+
+    test('map', () => {
+        const handler = jest.fn();
+        const eventDate = {test: 'test'};
+
+        observable
+            .mapData(payload => payload.test)
+            .subscribe(handler);
+        
+        observable.fire(TestEvent.FIRST, eventDate);
+
+        expect(handler).toBeCalledWith(TestEvent.FIRST, eventDate.test);
     })
 })
