@@ -4,7 +4,9 @@
     "scripts": {
         "start": "npm run build:live",
         "start:dev": "ts-node src/main.ts",
-        "build": "tsc -p .",
+        "prebuild": "rm -rf dist",
+        "build": "webpack",
+        "build2": "tsc -p .",
         "build:live": "nodemon",
         "test": "jest --watch"
     },
@@ -14,7 +16,10 @@
         "jest": "^26.6.3",
         "nodemon": "^2.0.7",
         "ts-jest": "^26.4.4",
+        "ts-loader": "^9.2.6",
         "ts-node": "^7.0.1",
-        "typescript": "^3.9.7"
+        "typescript": "^3.9.10",
+        "webpack": "^5.64.4",
+        "webpack-cli": "^4.9.1"
     }
 }
