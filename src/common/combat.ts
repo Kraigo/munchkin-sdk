@@ -31,11 +31,17 @@ export class Combat {
 
             if (this.canPlayersWin) {
                 choice.add({
-                    action: ChoiceAction.COMBAT_WIN
+                    action: ChoiceAction.COMBAT_WIN,
+                    handle: () => {
+                        console.log("NOT_IMPLEMENTED")
+                    }
                 })
             } else {
                 choice.add({
-                    action: ChoiceAction.COMBAT_RUN
+                    action: ChoiceAction.COMBAT_RUN,
+                    handle: () => {
+                        console.log("NOT_IMPLEMENTED")
+                    }
                 })
             }
 

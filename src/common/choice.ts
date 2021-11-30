@@ -23,7 +23,7 @@ export class Choice {
 
     public options: ChoiceOption[] = [];
 
-    public add(option: ChoiceOption) {
+    public add(option: ChoiceOption): Choice {
         this.options.push(option);
         return this;
     }

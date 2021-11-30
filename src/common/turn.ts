@@ -29,11 +29,17 @@ export class Turn {
                     let choice = Choice.create()
                         .add({
                             // title: 'Look for Trouble',
-                            action: ChoiceAction.LOOK_FOR_TROUBLE
+                            action: ChoiceAction.LOOK_TROUBLE,
+                            handle: () => {
+                                console.log("NOT_IMPLEMENTED")
+                            }
                         })
                         .add({
                             // title: 'Loot the Room',
-                            action: ChoiceAction.LOOT_THE_ROOM                    
+                            action: ChoiceAction.LOOT_ROOM,
+                            handle: () => {
+                                console.log("NOT_IMPLEMENTED")
+                            }                
                         });
                     this.player.makeChoice(choice);
                 } else {
