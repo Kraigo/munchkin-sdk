@@ -1,7 +1,9 @@
-import { Board, BoardEvent } from "../common/board";
+import { Board } from "../common/board";
 import { UILogger, UIMessage, UIFormatter } from "./core";
 import { createInterface, Interface } from 'readline'
 import { ChoiceAction } from "../common";
+import * as events from "../events";
+import { BoardEvent } from "../events";
 // import { Player, CardType, Card } from "../common";
 
 export class UIConsole {
@@ -27,20 +29,20 @@ export class UIConsole {
     }
 
     onBoardChange(event: BoardEvent) {
-        switch(event) {
-            case BoardEvent.START_GAME: {
+        switch(true) {
+            case event instanceof events.StartGameEvent: {
 
                 const message = 'Lets start the game. Press enter';
                 this.ui.message(message, this.onStartGame.bind(this));
                 break;
             }
-            case BoardEvent.NEXT_PHASE: {
+            case event instanceof events.NextPhaseEvent: {
 
                 this.ui.choice(this.board.phase.choice, 'Choice?', this.onPlayChoice.bind(this));
                 break;
             }
 
-            case BoardEvent.ROUND_FINISHED: {
+            case event instanceof events.RoundFinishedEvent: {
                 const message = 'Round finished';
                 this.ui.message(message, this.onStartGame.bind(this));
                 break;

@@ -1,5 +1,7 @@
-import { Board, BoardEvent } from "../../common/board";
+import { Board } from "../../common/board";
 import { UIFormatter } from "./ui-formatter";
+import * as events from "../../events";
+import { BoardEvent } from "../../events";
 
 export class UILogger {
     constructor(
@@ -13,22 +15,22 @@ export class UILogger {
     }
 
     onBoardChange(event: BoardEvent, options: any) {
-        const eventName = BoardEvent[event]; 
+        const eventName = event.constructor.name
 
-        switch(event) {
-            case BoardEvent.ROUND_STARTED: {
+        switch(true) {
+            case event instanceof events.RoundStartedEvent: {
                 this.log(`${eventName} : ${this.board.currentPlayer.name}`);
                 break;
             }
-            case BoardEvent.NEXT_PHASE: {
+            case event instanceof events.NextPhaseEvent: {
                 this.log(`${eventName} : ${options.constructor.name}`);
                 break;
             }
-            case BoardEvent.CARD_PLAYED: {
+            case event instanceof events.CardPlayedEvent: {
                 this.log(`${eventName} : ${options.name}`);
                 break;
             }
-            case BoardEvent.ROLL_DICE: {
+            case event instanceof events.RollDiceEvent: {
                 this.log(`${eventName} : ${options}`);
                 break;
             }
