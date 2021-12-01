@@ -1,5 +1,5 @@
-import { Board } from "./board";
-import { CardDeck } from "./card";
+import { Board } from "../common/board";
+import { CardDeck } from "../common/card";
 import { Choice, ChoiceAction } from "../common";
 
 export enum PhaseAction {

@@ -5,7 +5,7 @@ export * from './combat';
 export * from './curse';
 export * from './emitter';
 export * from './monster';
-export * from './phase';
+export * from '../phases/phase';
 export * from './player';
 export * from './player-ai';
 export * from './shot';

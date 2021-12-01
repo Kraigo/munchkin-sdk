@@ -1,4 +1,4 @@
-import { Phase } from "../common/phase";
+import { Phase } from "./phase";
 import { Board, Card, Choice, ChoiceAction } from "../common";
 import { RoomSearchPhase } from "./room-search.phase";
 

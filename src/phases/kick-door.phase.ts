@@ -1,4 +1,4 @@
-import { Phase } from "../common/phase";
+import { Phase } from "./phase";
 import { CardDeck, Monster, Curse, Choice } from "../common";
 import { CombatPhase } from "./combat.phase";
 import { CursePhase } from "./curse.phase";
@@ -12,20 +12,16 @@ export class KickDoorPhase extends Phase {
             handle: () => {
                 const card = this.board.openDeck(CardDeck.DOOR)
                 const player = this.board.currentPlayer;
-        
-                switch (true) {
-                    case card instanceof Monster: {
-                        this.board.setPhase(new CombatPhase(this.board));
-                        break;
-                    }
-                    case card instanceof Curse: {
-                        this.board.setPhase(new CursePhase(this.board));
-                        break;
-                    }
-                    default: {
-                        this.board.setPhase(new OtherCardPhase(this.board, card));
-                        break;
-                    }
+                
+                if (card instanceof Monster) {
+                    const combat = this.board.fight(player, card);
+                    this.board.setPhase(new CombatPhase(this.board, combat));
+                }
+                else if (card instanceof Curse) {
+                    this.board.setPhase(new CursePhase(this.board));
+                }
+                else {
+                    this.board.setPhase(new OtherCardPhase(this.board, card));
                 }
             }
         })

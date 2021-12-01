@@ -42,7 +42,8 @@ describe("Combat", () => {
             expect(combat.playerSide.length).toBe(1);
         })
 
-        test('player should win', () => {    
+        test('player should win', () => {  
+            expect(combat.canPlayersWin).toBeTruthy();  
             expect(combat.playerSideCombatStrength).toBeGreaterThan(combat.monsterSideCombatStrength);
         });
         
@@ -65,7 +66,8 @@ describe("Combat", () => {
         const handler = jest.fn();
         player.onChoice.subscribe(handler);
 
-        test('player can\'t win', () => {    
+        test('player can\'t win', () => {
+            expect(combat.canPlayersWin).toBeFalsy();
             expect(combat.playerSideCombatStrength).toBeLessThanOrEqual(combat.monsterSideCombatStrength);
         });
         

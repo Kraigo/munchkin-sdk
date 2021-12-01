@@ -1,3 +1,4 @@
-export * from './cards';
 export * from './common';
-export * from './phases';
+export * from './cards';
+export * as phases from './phases';
+export * as events from './events';

@@ -1,4 +1,4 @@
-import { Phase } from "../common/phase";
+import { Phase } from "./phase";
 import { Board, Card, Choice } from "../common";
 import { LootRoomPhase } from "./loot-room.phase";
 import { LookTroublePhase } from "./look-trouble.phase";

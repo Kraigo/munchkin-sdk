@@ -1,14 +1,21 @@
 {
-    "main": "dist/main",
-    "types": "lib/index",
+    "main": "lib/main.js",
+    "types": "lib/main.d.ts",
+    "author": "Kraigo",
+    "description": "Munchking SDK",
     "scripts": {
         "start": "npm run build:live",
         "start:dev": "ts-node src/main.ts",
-        "prebuild": "rm -rf dist",
+        "prebuild": "rm -rf lib",
         "build": "tsc -p .",
+        "build:watch": "tsc -p . --watch",
+        "prepare" : "npm run build",
         "build:live": "nodemon",
         "test": "jest --watch"
     },
+    "files": [
+      "lib/**/*"
+    ],
     "devDependencies": {
         "@types/jest": "^23.3.12",
         "@types/node": "^10.17.51",
@@ -17,5 +24,8 @@
         "ts-jest": "^26.4.4",
         "ts-node": "^7.0.1",
         "typescript": "^3.9.10"
-    }
+    },
+    "keywords": [
+        "muchking", "game", "sdk"
+    ]
 }

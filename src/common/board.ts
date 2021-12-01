@@ -6,7 +6,7 @@ import { Curse } from "./curse";
 import { shuffle, logger } from "./utils";
 import { Emitter } from "./emitter";
 import { Combat } from "./combat";
-import { Phase, PhaseAction } from "../common/phase";
+import { Phase, PhaseAction } from "../phases/phase";
 import { KickDoorPhase, CombatPhase, CursePhase } from "../phases";
 import { BoardEvent, CardPlayedEvent, NextPhaseEvent, RollDiceEvent, RoundFinishedEvent, RoundStartedEvent, StartGameEvent } from "../events";
 
@@ -130,8 +130,9 @@ export class Board {
 
     
 
-    fight(player: Player, monster: Monster) {
+    fight(player: Player, monster: Monster): Combat {
         this.combat = new Combat(player, monster);
+        return this.combat;
     }
 
     rollDice() {

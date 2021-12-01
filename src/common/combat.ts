@@ -50,7 +50,7 @@ export class Combat {
     }
 
     get canPlayersWin() {
-        return this.playerSideCombatStrength > this.monsterSideCombatStrength;
+        return this.playerSideCombatStrength >= this.monsterSideCombatStrength;
     }
 
     get playerSideCombatStrength() {
@@ -92,5 +92,16 @@ export class Combat {
                 strength += monster.level;
                 return strength;
             }, 0)
+    }
+    get rewardLevels(): number {
+        return this.monsterSide
+            .filter(card => card instanceof Monster)
+            .reduce((acc, curr: Monster) => acc + curr.rewardLevels, 0)
+    }
+    
+    get rewardTreasurs(): number {
+        return this.monsterSide
+            .filter(card => card instanceof Monster)
+            .reduce((acc, curr: Monster) => acc + curr.rewardTreasurs, 0)
     }
 }

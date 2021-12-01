@@ -1,4 +1,4 @@
-import { Phase } from "../common/phase";
+import { Phase } from "./phase";
 import { Choice, Curse } from "../common";
 
 export class CursePhase extends Phase {

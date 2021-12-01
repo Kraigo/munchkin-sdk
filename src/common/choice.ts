@@ -6,7 +6,8 @@ export enum ChoiceAction {
     KICK_DOOR,
     DRAW_CARD,
     ROLL_DICE,
-    APPLY_CARD
+    APPLY_CARD,
+    COLLECT_REWARDS
 }
 export interface ChoiceOption {
     // title: string;

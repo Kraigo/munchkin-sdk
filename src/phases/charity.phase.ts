@@ -1,4 +1,4 @@
-import { Phase } from "../common/phase";
+import { Phase } from "./phase";
 
 export class CharityPhase extends Phase {
 }

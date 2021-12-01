@@ -1,19 +1,22 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "declaration": true,
         "moduleResolution": "node",
         "noImplicitAny": true,
         "removeComments": true,
         "esModuleInterop": true,
-        "outDir": "./dist",
+        "outDir": "./lib",
         "sourceMap": true,
         "lib": ["es6", "dom"],
         "target": "es6",
         "baseUrl": "src",
         "paths": {
-            "common": ["common/*"],
-            "monsters": ["cards/monsters/*"],
-            "curses": ["cards/curses/*"]
+            "common": ["./src/common/*"],
+            "monsters": ["./src/cards/monsters/*"],
+            "curses": ["./src/cards/curses/*"],
+            "events": ["./src/events/*"],
+            "phases": ["./src/phases/*"]
         }
     },
     "include": [
