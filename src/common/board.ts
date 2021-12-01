@@ -8,17 +8,18 @@ import { Emitter } from "./emitter";
 import { Combat } from "./combat";
 import { Phase, PhaseAction } from "../common/phase";
 import { KickDoorPhase, CombatPhase, CursePhase } from "../phases";
+import { BoardEvent, CardPlayedEvent, NextPhaseEvent, RollDiceEvent, RoundFinishedEvent, RoundStartedEvent, StartGameEvent } from "../events";
 
-export enum BoardEvent {
-    START_GAME,
-    ERROR,
-    NEXT_PHASE,
-    CARD_PLAYED,
-    CARD_DRAWED,
-    ROUND_FINISHED,
-    ROUND_STARTED,
-    ROLL_DICE
-}
+// export enum BoardEvent {
+//     START_GAME,
+//     ERROR,
+//     NEXT_PHASE,
+//     CARD_PLAYED,
+//     CARD_DRAWED,
+//     ROUND_FINISHED,
+//     ROUND_STARTED,
+//     ROLL_DICE
+// }
 export class Board {
     players: Player[] = [];
     currentPlayer: Player;
@@ -60,7 +61,7 @@ export class Board {
         }
         
         shuffle(this.deck);
-        this.onChange.fire(BoardEvent.START_GAME);
+        this.onChange.fire(new StartGameEvent());
     }
 
     curse(player: Player, curse: Curse, ) {
@@ -85,7 +86,7 @@ export class Board {
 
         if (card) {
             this.moveCard(card, this.deck, this.play);
-            this.onChange.fire(BoardEvent.CARD_PLAYED, card);
+            this.onChange.fire( new CardPlayedEvent(card));
 
             return card;
         }
@@ -135,7 +136,7 @@ export class Board {
 
     rollDice() {
         const result = Math.ceil(Math.random() * 6);
-        this.onChange.fire(BoardEvent.ROLL_DICE, result);
+        this.onChange.fire(new RollDiceEvent(result));
 
         return result;
     }
@@ -146,7 +147,7 @@ export class Board {
         // }
 
         this.currentPlayer = this.nextPlayer;
-        this.onChange.fire(BoardEvent.ROUND_STARTED, this.currentPlayer);
+        this.onChange.fire(new RoundStartedEvent(this.currentPlayer));
 
         if (!this.phase) {
             this.setPhase(new KickDoorPhase(this));
@@ -159,11 +160,11 @@ export class Board {
 
     finishRound() {
         this.phase = null;
-        this.onChange.fire(BoardEvent.ROUND_FINISHED);
+        this.onChange.fire(new RoundFinishedEvent());
     }
 
     setPhase(phase: Phase) {
         this.phase = phase;
-        this.onChange.fire(BoardEvent.NEXT_PHASE, phase);
+        this.onChange.fire(new NextPhaseEvent(phase));
     }
 }

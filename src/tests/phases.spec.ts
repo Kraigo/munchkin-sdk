@@ -1,7 +1,8 @@
 import {
-    Board, Player, PlayerAI, BoardEvent,
+    Board, Player, PlayerAI,
     CardDeck, Monster, Curse, Card, Phase, ChoiceAction
 } from "../common";
+import * as events from '../events';
 import { PixelMonster, BugMonster } from "../cards/monsters";
 import { RockCurse } from "../cards/curses";
 import { BombShot } from "../cards/shots";
@@ -49,13 +50,16 @@ describe('Kick the Door phase', () => {
 
     test('play action', () => {
         const handler = jest.fn();
-        board.onChange.subscribe(handler);
+        board.onChange
+            .filter(e => e instanceof events.CardPlayedEvent)
+            .subscribe(handler);
+            
         expect(board.play.length).toBe(0);
         expect(board.phase.choice.options.length).toBe(1);
 
         board.phase.action(ChoiceAction.KICK_DOOR);
         
-        expect(handler).toBeCalledWith(BoardEvent.CARD_PLAYED, expect.any(Card));
+        expect(handler).toBeCalled();
         expect(board.play.length).toBe(1);
     });
 

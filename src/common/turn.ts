@@ -1,10 +1,11 @@
-import { Board, BoardEvent } from "./board";
+import { Board } from "./board";
 import { Monster } from "./monster";
 import { Player } from "./player";
 import { Choice, ChoiceAction } from "./choice"
 import { Curse } from "./curse";
 import { CardDeck } from "./card";
 import { Combat } from "./combat";
+import { NextPhaseEvent } from "../events";
 
 export class Turn {
     phase: number = 0;
@@ -53,7 +54,7 @@ export class Turn {
             }
         }
 
-        this.board.onChange.fire(BoardEvent.NEXT_PHASE);
+        this.board.onChange.fire(new NextPhaseEvent(null));
     }
 
     kickOpenTheDoor() {

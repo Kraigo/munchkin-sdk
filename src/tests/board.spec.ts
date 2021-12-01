@@ -1,4 +1,5 @@
-import { Board, Player, PlayerAI, BoardEvent } from "../common";
+import { Board, Player, PlayerAI } from "../common";
+import * as events from '../events';
 import { PixelMonster } from "../cards/monsters/pixel.monster";
 import { BugMonster } from "../cards/monsters/bug.monster";
 import { RockCurse } from "../cards/curses/rock.curse";
@@ -40,7 +41,7 @@ describe('Board', () => {
     test('rool dice event', () => {        
         const handler = jest.fn();
         board.onChange
-            .filter(e => e === BoardEvent.ROLL_DICE)
+            .filter(e => e instanceof events.RollDiceEvent)
             .subscribe(handler);
 
         board.rollDice();

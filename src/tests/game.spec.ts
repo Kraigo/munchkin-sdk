@@ -1,7 +1,7 @@
 import {
-    Board, Player, PlayerAI, BoardEvent,
-    CardDeck, Monster, Curse, Phase
+    Board, Player, PlayerAI, Phase
 } from "../common";
+import * as events from '../events';
 import { PixelMonster } from "../cards/monsters/pixel.monster";
 import { BugMonster } from "../cards/monsters/bug.monster";
 import { RockCurse } from "../cards/curses/rock.curse";
@@ -26,20 +26,24 @@ describe('Game', () => {
     test('start game', () => {       
 
         const handler = jest.fn();
-        board.onChange.subscribe(handler);
+        board.onChange
+            .filter(e => e instanceof events.StartGameEvent)
+            .subscribe(handler);
 
         board.startGame()
 
-        expect(handler).toBeCalledWith(BoardEvent.START_GAME);
+        expect(handler).toBeCalled();
     });
 
     test('select first player', () => {
         const handler = jest.fn();
-        board.onChange.subscribe(handler);
+        board.onChange
+            .filter(e => e instanceof events.NextPhaseEvent)
+            .subscribe(handler);
 
         board.nextRound();
         
-        expect(handler).toBeCalledWith(BoardEvent.NEXT_PHASE, expect.any(Phase));
+        expect(handler).toBeCalled();
     });
 
 })

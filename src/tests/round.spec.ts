@@ -1,6 +1,7 @@
 import {
-    Board, Player, PlayerAI, BoardEvent, ChoiceAction} from "../common";
+    Board, Player, PlayerAI, ChoiceAction} from "../common";
 import { ElfRace } from "../cards/races";
+import * as events from '../events';
 
 
 
@@ -25,16 +26,18 @@ describe('Round events', () => {
 
     test('start round', () => {
         const handler = jest.fn();
-        board.onChange.subscribe(handler);
+        board.onChange
+            .filter(e => e instanceof events.RoundStartedEvent)
+            .subscribe(handler);
         board.nextRound();
 
-        expect(handler).toBeCalledWith(BoardEvent.ROUND_STARTED, expect.any(Player));
+        expect(handler).toBeCalled();
     })
 
     test('finished', () => {
         const handler = jest.fn();
         board.onChange
-            .filter(e => e === BoardEvent.ROUND_FINISHED)
+            .filter(e => e instanceof events.RoundFinishedEvent)
             .subscribe(handler);
 
         board.phase.action(ChoiceAction.KICK_DOOR);
@@ -42,6 +45,6 @@ describe('Round events', () => {
         board.phase.action(ChoiceAction.LOOT_ROOM);
         board.phase.action(ChoiceAction.DRAW_CARD);
 
-        expect(handler).toBeCalledWith(BoardEvent.ROUND_FINISHED);
+        expect(handler).toBeCalled();
     })
 })
