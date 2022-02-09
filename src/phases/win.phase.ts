@@ -8,8 +8,8 @@ export class WinPhase extends Phase {
             handle: () => {
                 const firstPlayer = this.combat.players[0];
 
-                console.log('rewardTreasurs', this.combat.rewardTreasurs);
-                for (let i = this.combat.rewardTreasurs; i > 0; i--) {
+                console.log('rewardTreasures', this.combat.rewardTreasures);
+                for (let i = this.combat.rewardTreasures; i > 0; i--) {
                     const card = this.board.getCardFromDeck(CardDeck.TREASURE);
                     console.log('card', card);
                     this.board.takeCard(card, firstPlayer.cardsInHand);

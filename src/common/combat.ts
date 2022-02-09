@@ -99,9 +99,9 @@ export class Combat {
             .reduce((acc, curr: Monster) => acc + curr.rewardLevels, 0)
     }
     
-    get rewardTreasurs(): number {
+    get rewardTreasures(): number {
         return this.monsterSide
             .filter(card => card instanceof Monster)
-            .reduce((acc, curr: Monster) => acc + curr.rewardTreasurs, 0)
+            .reduce((acc, curr: Monster) => acc + curr.rewardTreasures, 0)
     }
 }

@@ -9,10 +9,18 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist',
     filename: "[name]-sdk.js",
     library: 'MunchSDK',
     libraryTarget: 'umd',
     umdNamedDefine: true
+  },
+  devServer: {
+    port: 3000,
+    static: {
+        directory: path.join(__dirname, 'public'),
+        serveIndex: true,
+    },
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],

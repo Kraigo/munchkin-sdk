@@ -1,0 +1,100 @@
+.header {
+    grid-area: header;
+}
+
+.board {
+    grid-area: board;
+}
+
+.history {
+    grid-area: history;
+    overflow-y: auto;
+}
+
+.hand {
+    grid-area: hand;
+}
+
+.js-board-play,
+.js-hand {
+    display: flex;
+}
+
+.wrapper {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+        "header header history"
+        "board board history"
+        "hand hand history";
+    background-color: #fff;
+    color: #444;
+
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.section {
+    padding: 10px 15px;
+    background-color: #f3f3f3;
+    border-radius: 3px;
+    /* margin: 10px; */
+}
+
+button {
+    border: none;
+    padding: 0.5em 1em;
+    background-color: #bce5be;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0 1px 1px rgb(0 0 0 / 40%);
+}
+
+
+/* Card */
+
+
+.card {
+    padding: 10px;
+    background-color: #fff;
+    border: 4px solid saddlebrown;
+    border-radius: 10px;
+    display: inline-block;
+    width: 140px;
+    height: 170px;
+}
+
+.card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas:
+        "level level"
+        "name name"
+        "description description"
+        "reward-levels reward-treasures";
+}
+
+.card-level {
+    grid-area: level;
+    text-align: center;
+}
+
+.card-name {
+    grid-area: name;
+    font-size: 1.3em;
+    text-align: center;
+}
+.card-reward-treasures {
+    grid-area: reward-treasures;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: right;
+}
+.card-reward-levels {
+    grid-area: reward-levels;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: left;
+}

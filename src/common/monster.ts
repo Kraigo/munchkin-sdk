@@ -3,7 +3,7 @@ import { Card } from "./card";
 export class Monster extends Card {
 
     rewardLevels: number = 1;
-    rewardTreasurs: number = 1;
+    rewardTreasures: number = 1;
     isUnded: boolean = false;
 
     level: number = 1;

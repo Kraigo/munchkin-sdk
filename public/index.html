@@ -5,184 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Munchkin</title>
-    <!-- <script> var exports = {}; </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script> -->
-    <script type="module" src="../dist/main-sdk.js"></script>
-    <script type="module" src="./main.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="./dist/main-sdk.js"></script>
+    <script src="main.js"></script>
 </head>
 <body>
-    <script>
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const $message = document.getElementById('js-message');
-            const $actions = document.getElementById('js-actions');
-            const $phase = document.getElementById('js-phase');
-            const $history = document.getElementById('js-history');
-            const $boadPlay = document.getElementById('js-board-play');
-
-            const {Board, Player, PlayerAI} = MunchSDK;
-            const board = new Board();
-
-            board.deck = MunchSDK.cards;
-
-            board.players = [
-                new Player({name: 'Player1'}),
-                new PlayerAI()
-            ]
-
-
-            board.onChange.subscribe(onBoardChange);
-            board.onChange.subscribe((event, options) => {
-                const { BoardEvent, ChoiceAction } = MunchSDK;
-                console.log(BoardEvent[event], options);
-                const li = document.createElement('li');
-                li.innerText = BoardEvent[event];
-                $history.appendChild(li);
-            });
-
-
-            board.onChange.subscribe((event, options) => {
-                const { BoardEvent, ChoiceAction } = MunchSDK;
-                const $players = document.getElementById('js-players');
-
-                $players.innerHTML = '';
-                for (let player of board.players) {
-                    const el = document.createElement('div');
-
-                    el.innerText = `${player.name} [${player.level}] + ${player.bonuses}`;
-                    $players.appendChild(el);
-                }
-            });
-
-            board.startGame();
-
-
-            function onBoardChange(event, params) {
-                const { BoardEvent, ChoiceAction } = MunchSDK;
-                $phase.innerText = BoardEvent[event];
-                $actions.innerHTML = '';
-
-                switch(event) {
-                    case BoardEvent.START_GAME: {
-
-                        $message.innerText = 'Lets start the game. Press enter';
-                        addAction('Start', () => {
-                            board.nextRound();
-                        })
-                        break;
-                    }
-                    case BoardEvent.NEXT_PHASE: {
-                        $message.innerText = 'Choice?';
-                        for (let opt of params.choice.options) {
-                            addAction(ChoiceAction[opt.action], () => {
-                                opt.handle(opt.action)
-                            })
-                        }
-                        
-                        // this.ui.choice(this.board.phase.choice, 'Choice?', this.onPlayChoice.bind(this));
-                        break;
-                    }
-
-                    case BoardEvent.ROUND_FINISHED: {
-                        $message.innerText = 'Round finished';
-                        addAction('Next Round', () => {
-                            board.nextRound();
-                        })
-                        break;
-                    }
-
-                    case BoardEvent.CARD_PLAYED: {
-                        playCard(params);
-                        break;
-                    }
-                }
-            }
-
-            function addAction(text, callback) {
-                const btn = document.createElement('button');
-                btn.innerText = text;
-                btn.addEventListener('click', callback);
-                $actions.appendChild(btn);
-            } 
-
-            function playCard(card) {
-
-                const div = document.createElement('div');
-                div.className = 'card';
-
-                div.innerHTML += `<div>Deck: ${card.deck}</div>`;
-                div.innerHTML += `<div>Name: ${card.name}</div>`;
-                div.innerHTML += `<div>Level: ${card.level}</div>`;
-                div.innerHTML += `<div>Treasurs: ${card.rewardTreasurs}</div>`;
-                div.innerHTML += `<div>Reward: ${card.rewardLevels}</div>`;
-                $boadPlay.appendChild(div);
-            } 
-        })
-    </script>
 
     <div class="wrapper">
 
         <div class="history">
-            <ul id="js-history"></ul>
+            <div class="section">
+                <b>History</b>
+                <ul id="js-history"></ul>
+            </div>
         </div>
 
         <div class="header">
+            <div class="section">
+                <b>Players:</b>
+                <div id="js-players"></div>
+            </div>
 
-            <div id="js-players"></div>
-
-            <div>
-                Message: <span id="js-message"></span>
+            <div class="section">
+                <b>Message:</b>
+                <span id="js-message"></span>
         
             </div>
         
-            <div>
-                Phase: <span id="js-phase"></span>
+            <div class="section">
+                <b>Phase:</b>
+                <span id="js-phase"></span>
             </div>
         
-            <div id="js-actions"></div>
+            <div class="section">
+                <b>Actions:</b>
+                <div id="js-actions"></div>
+            </div>
 
         </div>
 
         <div class="board">
-            <div  id="js-board-play"></div>
+            <div class="section">
+                <h4>Board cards:</h4>
+                <div id="js-board-play"></div>
+            </div>
+        </div>
+
+        <div class="hand">
+            <div class="section">
+                <h4>Hand cards:</h4>
+                <div id="js-hand"></div>
+            </div>
         </div>
 
     </div>
-
-    <style>
-
-.       .header {
-            grid-area: header;
-        }
-        .board {
-            grid-area: board;
-            display: flex;
-        }
-
-        .history {
-            grid-area: history;
-        }
-
-        .wrapper {
-            display: grid;
-            grid-gap: 10px;
-            grid-template-columns: 1fr 1fr 1f;
-            grid-template-areas:
-                    "header header history"
-                    "board board history";
-            background-color: #fff;
-            color: #444;
-
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .card {
-            padding: 10px;
-            border: 4px solid saddlebrown;
-            border-radius: 10px;
-        }
-    </style>
     
 </body>
 </html>
