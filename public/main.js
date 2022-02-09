@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const $actions = document.getElementById('js-actions');
     const $phase = document.getElementById('js-phase');
     const $history = document.getElementById('js-history');
-    const $boadPlay = document.getElementById('js-board-play');
+    const $boadPlayCards = document.getElementById('js-board-play-card');
+    const $playerPlayCards = document.getElementById('js-player-play-card');
+    const $playerHandCards = document.getElementById('js-player-hand-card');
 
     const {
         Board,
@@ -24,9 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     board.onChange.subscribe(onBoardChange);
     board.onChange.subscribe((event, options) => {
-        const {
-            ChoiceAction
-        } = MunchSDK;
+        // History
         console.log(getEventName(event), options);
         const li = document.createElement('li');
         li.innerText = getEventName(event);
@@ -35,9 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     board.onChange.subscribe((event, options) => {
-        const {
-            ChoiceAction
-        } = MunchSDK;
+        // Players
         const $players = document.getElementById('js-players');
 
         $players.innerHTML = '';
@@ -46,6 +44,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             el.innerText = `${player.name} [${player.level}] + ${player.bonuses}`;
             $players.appendChild(el);
+        }
+    });
+
+    board.onChange.subscribe((event, options) => {
+        $boadPlayCards.innerHTML = '';
+        for (let card of board.cardsInPlay) {
+            $boadPlayCards.appendChild(getCardNode(card));
+        }
+
+        if (board.currentPlayer) {
+            $playerHandCards.innerHTML = '';
+            for (let card of board.currentPlayer.cardsInHand) {
+                $playerHandCards.appendChild(getCardNode(card));
+            }
+
+            $playerPlayCards.innerHTML = '';
+            for (let card of board.currentPlayer.cardsInPlay) {
+                $playerHandCards.appendChild(getCardNode(card));
+            }
         }
     });
 
@@ -89,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             case event instanceof MunchSDK.events.CardPlayedEvent: {
-                playCard(event.card);
+                // playCard(event.card);
                 break;
             }
         }
@@ -119,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $actions.appendChild(btn);
     }
 
-    function playCard(card) {
+    function getCardNode(card) {
 
         const div = document.createElement('div');
         div.classList.add('card');
@@ -133,6 +150,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 div.innerHTML += `<div class="card-reward-levels">${card.rewardLevels} Levels</div>`;
                 break;
             }
+            case card instanceof MunchSDK.Curse: {
+                div.innerHTML += `<div class="card-level">Curse!</div>`;
+                div.innerHTML += `<div class="card-name">${card.name}</div>`;
+                break;
+            }
 
             default: {
                 div.innerHTML += `<div class="card-name">${card.name}</div>`;
@@ -140,6 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
         }
-        $boadPlay.appendChild(div);
+        return div;
     }
 })

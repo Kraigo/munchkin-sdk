@@ -7,7 +7,7 @@ export class CursePhase extends Phase {
         .add({
             action: Choice.actions.APPLY_CARD,
             handle: () => {
-                this.board.play
+                this.board.cardsInPlay
                     .filter(card => card instanceof Curse)
                     .forEach(card => {
                         this.board.curse(this.board.currentPlayer, <Curse>card);

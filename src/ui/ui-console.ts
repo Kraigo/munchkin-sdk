@@ -52,7 +52,7 @@ export class UIConsole {
 
     dbg() {        
         console.log("Cards in game: ")
-        this.board.play.forEach((card) => {
+        this.board.cardsInPlay.forEach((card) => {
             console.log(`-- ${card.name} [${UIFormatter.cardTypeName(card)}]`)
         })
 

@@ -28,7 +28,7 @@ export class Board {
 
     deck: Card[] = [];
     discard: Card[] = [];
-    play: Card[] = [];
+    cardsInPlay: Card[] = [];
 
     onChange = new Emitter<BoardEvent>();
     onAction = new Emitter<PhaseAction>();
@@ -85,7 +85,7 @@ export class Board {
         const card = this.getCardFromDeck(deck)
 
         if (card) {
-            this.moveCard(card, this.deck, this.play);
+            this.moveCard(card, this.deck, this.cardsInPlay);
             this.onChange.fire( new CardPlayedEvent(card));
 
             return card;
@@ -117,7 +117,7 @@ export class Board {
     }
 
     playCard(card: Card, fromCollection: Card[]) {
-        this.moveCard(card, fromCollection, this.play);
+        this.moveCard(card, fromCollection, this.cardsInPlay);
     }
 
     dropCard(card: Card, fromCollection: Card[]) {
@@ -125,7 +125,7 @@ export class Board {
     }
 
     takeCard(card: Card, toCollection: Card[]) {
-        this.moveCard(card, this.play, toCollection);
+        this.moveCard(card, this.cardsInPlay, toCollection);
     }
 
     
@@ -161,6 +161,9 @@ export class Board {
 
     finishRound() {
         this.phase = null;
+        for (let card of this.cardsInPlay) {
+            this.moveCard(card, this.cardsInPlay, this.discard);
+        }
         this.onChange.fire(new RoundFinishedEvent());
     }
 

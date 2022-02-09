@@ -11,13 +11,8 @@
     overflow-y: auto;
 }
 
-.hand {
-    grid-area: hand;
-}
-
-.js-board-play,
-.js-hand {
-    display: flex;
+.player {
+    grid-area: player;
 }
 
 .wrapper {
@@ -27,7 +22,7 @@
     grid-template-areas:
         "header header history"
         "board board history"
-        "hand hand history";
+        "player player history";
     background-color: #fff;
     color: #444;
 
