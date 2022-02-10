@@ -9,6 +9,7 @@ import { Combat } from "./combat";
 import { Phase, PhaseAction } from "../phases/phase";
 import { KickDoorPhase, CombatPhase, CursePhase } from "../phases";
 import { BoardEvent, CardPlayedEvent, NextPhaseEvent, RollDiceEvent, RoundFinishedEvent, RoundStartedEvent, StartGameEvent } from "../events";
+import { Race } from "./race";
 
 // export enum BoardEvent {
 //     START_GAME,
@@ -116,10 +117,6 @@ export class Board {
         });
     }
 
-    playCard(card: Card, fromCollection: Card[]) {
-        this.moveCard(card, fromCollection, this.cardsInPlay);
-    }
-
     dropCard(card: Card, fromCollection: Card[]) {
         this.moveCard(card, fromCollection, this.cardsInDiscard);
     }
@@ -133,7 +130,24 @@ export class Board {
     }
 
     takeCard(card: Card, player: Player) {
-        this.moveCard(card, this.cardsInPlay, player.cardsInHand);
+        for (let c of this.cardsInPlay) {
+            if (c === card) {
+                this.moveCard(card, this.cardsInPlay, player.cardsInHand);
+                return;
+            }
+        }
+        for (let c of this.cardsInDeck) {
+            if (c === card) {
+                this.moveCard(card, this.cardsInDeck, player.cardsInHand);
+                return;
+            }
+        }
+        for (let c of this.cardsInDiscard) {
+            if (c === card) {
+                this.moveCard(card, this.cardsInDiscard, player.cardsInHand);
+                return;
+            }
+        }
     }
 
     
@@ -178,5 +192,21 @@ export class Board {
     setPhase(phase: Phase) {
         this.phase = phase;
         this.onChange.fire(new NextPhaseEvent(phase));
+    }
+
+    playCard(player: Player, card: Card) {
+        const canPlay = player.cardsInHand.includes(card);
+        
+        if (!canPlay) return;
+
+        switch (true) {
+            case card instanceof Race: {
+                player.cardsInPlay = player.cardsInPlay.filter(c => !(c instanceof Race));
+                this.moveCard(card, player.cardsInHand, player.cardsInPlay);
+                this.onChange.fire(new CardPlayedEvent(card));
+            }
+        }
+
+
     }
 }

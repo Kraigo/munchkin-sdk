@@ -7,7 +7,10 @@ export class LootRoomPhase extends Phase {
         .add({
             action: Choice.actions.DRAW_CARD,
             handle: () => {
-                this.board.drawDeck(this.board.currentPlayer, CardDeck.DOOR);
+                const player = this.board.currentPlayer;
+                const card = this.board.getCardFromDeck(CardDeck.DOOR);
+                this.board.takeCard(card, player);
+
                 this.board.finishRound();
             }
         })

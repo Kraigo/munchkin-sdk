@@ -2,8 +2,8 @@ import { Card } from "./card";
 import { Item } from "./item";
 import { Monster } from "./monster";
 import { Choice } from "./choice";
-import { logger } from "./utils";
 import { Emitter } from "./emitter";
+import { Race, Races } from "./race";
 
 enum Gender {
     MALE,
@@ -64,6 +64,11 @@ export class Player {
 
     get maxCardsOnHand() {
         return 5;
+    }
+
+    get race(): Races {
+        const card = this.cardsInPlay.find(c => c instanceof Race) as Race;
+        return card ? card.race : Races.HUMAN;
     }
 
     gotUpLevel(num = 1) {

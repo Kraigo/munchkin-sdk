@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     board.onChange.subscribe((event, options) => {
-        playCards($boardPlayCards, board.cardsInPlay);
-        playCards($boardPlayDiscard, board.cardsInDiscard);
+        addCards($boardPlayCards, board.cardsInPlay);
+        addCards($boardPlayDiscard, board.cardsInDiscard);
         
         $boadDeckCards.innerHTML = '<i>Doors:</i> <br>'
             + board.deckDoors.map(c => `${c.name}`).join(', ')
@@ -63,16 +63,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (board.currentPlayer) {
             const player = board.currentPlayer;
-            playCards($playerHandCards, player.cardsInHand);
-            playCards($playerPlayCards, player.cardsInPlay);
+            addCards($playerHandCards, player.cardsInHand, (card) => {
+                board.playCard(player, card);
+            });
+            addCards($playerPlayCards, player.cardsInPlay);
 
-            $playerCurrent.innerHTML = `${player.name} ${player.level} (+${player.bonuses})`
+            $playerCurrent.innerHTML = `${player.name} ${player.level} (+${player.bonuses}), Race: ${MunchSDK.Races[player.race]}`
         }
     });
-
-    me.onChoice.subscribe((event) => {
-        console.log('userEvent', event);
-    })
 
     board.startGame();
 
@@ -82,12 +80,12 @@ document.addEventListener('DOMContentLoaded', function() {
             ChoiceAction
         } = MunchSDK;
         $phase.innerText = getEventName(event);
-        $actions.innerHTML = '';
 
         switch (true) {
             case event instanceof MunchSDK.events.StartGameEvent: {
 
                 $message.innerText = 'Lets start the game. Press enter';
+                $actions.innerHTML = '';
                 addAction('Start', () => {
                     board.nextRound();
                 })
@@ -95,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             case event instanceof MunchSDK.events.NextPhaseEvent: {
                 $message.innerText = 'Choice?';
+                $actions.innerHTML = '';
                 for (let opt of event.phase.choice.options) {
                     addAction(ChoiceAction[opt.action], () => {
                         opt.handle(opt.action)
@@ -107,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             case event instanceof MunchSDK.events.RoundFinishedEvent: {
                 $message.innerText = 'Round finished';
+                $actions.innerHTML = '';
                 addAction('Next Round', () => {
                     board.nextRound();
                 })
@@ -173,10 +173,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return div;
     }
 
-    function playCards($target, cards) {
+    function addCards($target, cards, callback) {
         $target.innerHTML = '';
         for (let card of cards) {
-            $target.appendChild(getCardNode(card));
+            const cardElm = getCardNode(card);
+            cardElm.addEventListener('click', () => {
+                if (typeof callback === 'function') {
+                    callback(card)
+                }
+            });
+            $target.appendChild(cardElm)
         }
     }
 })
