@@ -3,9 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const $actions = document.getElementById('js-actions');
     const $phase = document.getElementById('js-phase');
     const $history = document.getElementById('js-history');
-    const $boadPlayCards = document.getElementById('js-board-play-card');
+    const $boardPlayCards = document.getElementById('js-board-play-card');
+    const $boadDeckCards = document.getElementById('js-board-deck-card');
+    const $boardPlayDiscard = document.getElementById('js-board-discard-card');
     const $playerPlayCards = document.getElementById('js-player-play-card');
     const $playerHandCards = document.getElementById('js-player-hand-card');
+    const $playerCurrent = document.getElementById('js-player-current');
+    const $playerActions = document.getElementById('js-player-actions');
 
     const {
         Board,
@@ -14,12 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
     } = MunchSDK;
     const board = new Board();
 
-    board.deck = MunchSDK.cards;
+    board.cardsInDeck = MunchSDK.cards;
+    const me = new Player({
+        name: 'Player1'
+    })
 
     board.players = [
-        new Player({
-            name: 'Player1'
-        }),
+        me,
         new PlayerAI()
     ]
 
@@ -37,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
     board.onChange.subscribe((event, options) => {
         // Players
         const $players = document.getElementById('js-players');
-
         $players.innerHTML = '';
         for (let player of board.players) {
             const el = document.createElement('div');
@@ -48,23 +52,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     board.onChange.subscribe((event, options) => {
-        $boadPlayCards.innerHTML = '';
-        for (let card of board.cardsInPlay) {
-            $boadPlayCards.appendChild(getCardNode(card));
-        }
+        playCards($boardPlayCards, board.cardsInPlay);
+        playCards($boardPlayDiscard, board.cardsInDiscard);
+        
+        $boadDeckCards.innerHTML = '<i>Doors:</i> <br>'
+            + board.deckDoors.map(c => `${c.name}`).join(', ')
+            + '<br>'
+            + '<i>Treasures:</i> <br>'
+            + board.deckTreasures.map(c => `${c.name}`).join(', ');
 
         if (board.currentPlayer) {
-            $playerHandCards.innerHTML = '';
-            for (let card of board.currentPlayer.cardsInHand) {
-                $playerHandCards.appendChild(getCardNode(card));
-            }
+            const player = board.currentPlayer;
+            playCards($playerHandCards, player.cardsInHand);
+            playCards($playerPlayCards, player.cardsInPlay);
 
-            $playerPlayCards.innerHTML = '';
-            for (let card of board.currentPlayer.cardsInPlay) {
-                $playerHandCards.appendChild(getCardNode(card));
-            }
+            $playerCurrent.innerHTML = `${player.name} ${player.level} (+${player.bonuses})`
         }
     });
+
+    me.onChoice.subscribe((event) => {
+        console.log('userEvent', event);
+    })
 
     board.startGame();
 
@@ -163,5 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         }
         return div;
+    }
+
+    function playCards($target, cards) {
+        $target.innerHTML = '';
+        for (let card of cards) {
+            $target.appendChild(getCardNode(card));
+        }
     }
 })

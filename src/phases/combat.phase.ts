@@ -23,5 +23,6 @@ export class CombatPhase extends Phase {
 
     constructor(board: Board, private combat: Combat) {
         super(board);
+        // combat.players[0].cardsInHand
     }
 }

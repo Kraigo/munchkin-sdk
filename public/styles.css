@@ -15,14 +15,18 @@
     grid-area: player;
 }
 
+.discard {
+    grid-area: discard;
+}
+
 .wrapper {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
         "header header history"
-        "board board history"
-        "player player history";
+        "board board discard"
+        "player player player";
     background-color: #fff;
     color: #444;
 
@@ -46,6 +50,18 @@ button {
     box-shadow: 0 1px 1px rgb(0 0 0 / 40%);
 }
 
+.cards-line {
+    display: flex;
+    flex-direction: row;
+}
+
+.cards-stack {
+    display: flex;
+    flex-direction: column;
+}
+.cards-stack .card:not(:first-child) {
+    margin-top: -140px;
+}
 
 /* Card */
 

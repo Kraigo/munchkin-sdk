@@ -70,7 +70,7 @@ export class Turn {
                 break;
             }
             default: {
-                this.board.takeCard(card, this.player.cardsInHand);
+                this.board.takeDoorCard(card, this.player.cardsInHand);
                 this.finished = true;
                 break;
             }

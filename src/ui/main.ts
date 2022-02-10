@@ -10,7 +10,7 @@ import { UIConsole } from ".";
     const board = new Board();
     const ui = new UIConsole(board);
 
-    board.deck = cards;
+    board.cardsInDeck = cards;
 
     board.players = [
         new Player({name: 'Player1'}),

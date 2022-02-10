@@ -26,8 +26,8 @@ export class Board {
     phase: Phase;
     combat: Combat;
 
-    deck: Card[] = [];
-    discard: Card[] = [];
+    cardsInDeck: Card[] = [];
+    cardsInDiscard: Card[] = [];
     cardsInPlay: Card[] = [];
 
     onChange = new Emitter<BoardEvent>();
@@ -60,7 +60,7 @@ export class Board {
             throw Error('Need more player (2 minimum)');
         }
         
-        shuffle(this.deck);
+        shuffle(this.cardsInDeck);
         this.onChange.fire(new StartGameEvent());
     }
 
@@ -73,10 +73,10 @@ export class Board {
     // }
 
     getCardFromDeck(deck: CardDeck) {
-        let cards = this.deck.filter(c => c.deck === deck);
+        let cards = this.cardsInDeck.filter(c => c.deck === deck);
         if (cards.length === 0) {
             this.shuffleDiscard();
-            cards = this.deck.filter(c => c.deck === deck)          
+            cards = this.cardsInDeck.filter(c => c.deck === deck)          
         }
         return cards.length > 0 ? cards[0] : null;
     }
@@ -85,7 +85,7 @@ export class Board {
         const card = this.getCardFromDeck(deck)
 
         if (card) {
-            this.moveCard(card, this.deck, this.cardsInPlay);
+            this.moveCard(card, this.cardsInDeck, this.cardsInPlay);
             this.onChange.fire( new CardPlayedEvent(card));
 
             return card;
@@ -96,23 +96,23 @@ export class Board {
         const card = this.getCardFromDeck(deck);
 
         if (card) {
-            this.moveCard(card, this.deck, player.cardsInHand);
+            this.moveCard(card, this.cardsInDeck, player.cardsInHand);
             return card;
         }
     }
 
     get deckDoors() {
-        return this.deck.filter(c => c.deck === CardDeck.DOOR);
+        return this.cardsInDeck.filter(c => c.deck === CardDeck.DOOR);
     }
 
     get deckTreasures() {
-        return this.deck.filter(c => c.deck === CardDeck.TREASURE);
+        return this.cardsInDeck.filter(c => c.deck === CardDeck.TREASURE);
     }
 
     shuffleDiscard() {
-        shuffle(this.discard);
-        this.discard.forEach(c => {
-            this.moveCard(c, this.discard, this.deck)
+        shuffle(this.cardsInDiscard);
+        this.cardsInDiscard.forEach(c => {
+            this.moveCard(c, this.cardsInDiscard, this.cardsInDeck)
         });
     }
 
@@ -121,11 +121,19 @@ export class Board {
     }
 
     dropCard(card: Card, fromCollection: Card[]) {
-        this.moveCard(card, fromCollection, this.discard);
+        this.moveCard(card, fromCollection, this.cardsInDiscard);
     }
 
-    takeCard(card: Card, toCollection: Card[]) {
-        this.moveCard(card, this.cardsInPlay, toCollection);
+    takeDoorCard(card: Card, toCollection: Card[]) {
+        this.moveCard(card, this.deckDoors, toCollection);
+    }
+    
+    takeTreasureCard(card: Card, toCollection: Card[]) {
+        this.moveCard(card, this.deckTreasures, toCollection);
+    }
+
+    takeCard(card: Card, player: Player) {
+        this.moveCard(card, this.cardsInPlay, player.cardsInHand);
     }
 
     
@@ -162,7 +170,7 @@ export class Board {
     finishRound() {
         this.phase = null;
         for (let card of this.cardsInPlay) {
-            this.moveCard(card, this.cardsInPlay, this.discard);
+            this.dropCard(card, this.cardsInPlay);
         }
         this.onChange.fire(new RoundFinishedEvent());
     }

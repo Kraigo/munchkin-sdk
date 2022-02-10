@@ -9,7 +9,7 @@ export class OtherCardPhase extends Phase {
             action: ChoiceAction.DRAW_CARD,
             handle: () => {
                 const player = this.board.currentPlayer;
-                this.board.takeCard(this.card, player.cardsInHand);
+                this.board.takeCard(this.card, player);
                 this.board.setPhase(new RoomSearchPhase(this.board));
             }
         });
