@@ -1,4 +1,6 @@
+import { Board } from "./board";
 import { Card } from "./card";
+import { Player } from "./player";
 
 export class Monster extends Card {
 
@@ -17,7 +19,12 @@ export class Monster extends Card {
         
     }
 
-    get combatStrength() {
+    get combatPower() {
         return this.level;
+    }
+
+
+    penalty(player: Player) {
+
     }
 }

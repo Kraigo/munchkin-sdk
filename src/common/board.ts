@@ -3,13 +3,18 @@ import { Card, CardDeck } from "./card";
 import { Turn } from "./turn";
 import { Monster } from "./monster";
 import { Curse } from "./curse";
-import { shuffle, logger } from "./utils";
+import { shuffle } from "./utils";
 import { Emitter } from "./emitter";
 import { Combat } from "./combat";
-import { Phase, PhaseAction } from "../phases/phase";
+import { Phase } from "../phases/phase";
 import { KickDoorPhase, CombatPhase, CursePhase } from "../phases";
 import { BoardEvent, CardPlayedEvent, NextPhaseEvent, RollDiceEvent, RoundFinishedEvent, RoundStartedEvent, StartGameEvent } from "../events";
 import { Race } from "./race";
+import { Shot } from "./shot";
+
+interface BoardOptions {
+    shuffle: boolean;
+}
 
 // export enum BoardEvent {
 //     START_GAME,
@@ -32,13 +37,17 @@ export class Board {
     cardsInPlay: Card[] = [];
 
     onChange = new Emitter<BoardEvent>();
-    onAction = new Emitter<PhaseAction>();
+    options: BoardOptions = {
+        shuffle: true
+    }
 
-    constructor() {
+    constructor(options?: BoardOptions) {
+        Object.assign(this.options, options);
     }
 
     private moveCard(card: Card, fromCollection: Card[], toCollection: Card[]) {
         const fromIndex = fromCollection.findIndex(c => c === card);
+        if (fromIndex === -1) return; 
         fromCollection.splice(fromIndex, 1);
         toCollection.push(card);
     }
@@ -61,7 +70,9 @@ export class Board {
             throw Error('Need more player (2 minimum)');
         }
         
-        shuffle(this.cardsInDeck);
+        if (this.options.shuffle) {
+            shuffle(this.cardsInDeck);
+        }
         this.onChange.fire(new StartGameEvent());
     }
 
@@ -130,22 +141,17 @@ export class Board {
     }
 
     takeCard(card: Card, player: Player) {
-        for (let c of this.cardsInPlay) {
-            if (c === card) {
-                this.moveCard(card, this.cardsInPlay, player.cardsInHand);
-                return;
-            }
-        }
-        for (let c of this.cardsInDeck) {
-            if (c === card) {
-                this.moveCard(card, this.cardsInDeck, player.cardsInHand);
-                return;
-            }
-        }
-        for (let c of this.cardsInDiscard) {
-            if (c === card) {
-                this.moveCard(card, this.cardsInDiscard, player.cardsInHand);
-                return;
+        const collections = [
+            this.cardsInPlay,
+            this.cardsInDeck,
+            this.cardsInDiscard
+        ]
+        for (let collection of collections) {
+            for (let c of collection) {
+                if (c === card) {
+                    this.moveCard(card, collection, player.cardsInHand);
+                    return;
+                }
             }
         }
     }
@@ -195,18 +201,37 @@ export class Board {
     }
 
     playCard(player: Player, card: Card) {
-        const canPlay = player.cardsInHand.includes(card);
-        
-        if (!canPlay) return;
-
-        switch (true) {
-            case card instanceof Race: {
+        if (player.cardsInHand.includes(card)) {
+            if (card instanceof Race) {
                 player.cardsInPlay = player.cardsInPlay.filter(c => !(c instanceof Race));
                 this.moveCard(card, player.cardsInHand, player.cardsInPlay);
                 this.onChange.fire(new CardPlayedEvent(card));
             }
+            else if (card instanceof Shot) {
+                this.moveCard(card, player.cardsInHand, player.cardsInPlay);
+                this.onChange.fire(new CardPlayedEvent(card));
+            }
         }
+        else if (player.cardsInPlay.includes(card)) {
+            if (!this.combat) return;
+            if (card instanceof Shot) {
+                this.moveCard(card, player.cardsInPlay, this.cardsInPlay);
+                this.onChange.fire(new CardPlayedEvent(card));
+            }
 
+        }
+    }
+    playCardMonsterSide(player: Player, card: Card) {
+        if (!this.combat) return;
+        this.moveCard(card, player.cardsInPlay, this.cardsInPlay);
+        this.combat.playMonsterSide(card);
+        this.onChange.fire(new CardPlayedEvent(card));
+    }
 
+    playCardPlayerSide(player: Player, card: Card) {
+        if (!this.combat) return;
+        this.moveCard(card, player.cardsInPlay, this.cardsInPlay);
+        this.combat.playPlayerSide(card);
+        this.onChange.fire(new CardPlayedEvent(card));
     }
 }

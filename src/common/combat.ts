@@ -13,85 +13,83 @@ export class Combat {
         this.players.push(player);
         this.monsterSide.push(<Card>monster);
         
-        this.fireChoices();      
+        // this.fireChoices();      
     }
 
     playPlayerSide(card: Card) {
         this.playerSide.push(card);
-        this.fireChoices(); 
+        // this.fireChoices(); 
     }
     playMonsterSide(card: Card) {
         this.monsterSide.push(card);
-        this.fireChoices();
+        // this.fireChoices();
     }
 
-    fireChoices() {
-        this.players.forEach(player => {
-            const choice = new Choice();
+    // fireChoices() {
+    //     this.players.forEach(player => {
+    //         const choice = new Choice();
 
-            if (this.canPlayersWin) {
-                choice.add({
-                    action: ChoiceAction.COMBAT_WIN,
-                    handle: () => {
-                        console.log("NOT_IMPLEMENTED")
-                    }
-                })
-            } else {
-                choice.add({
-                    action: ChoiceAction.COMBAT_RUN,
-                    handle: () => {
-                        console.log("NOT_IMPLEMENTED")
-                    }
-                })
-            }
+    //         if (this.canPlayersWin) {
+    //             choice.add({
+    //                 action: ChoiceAction.COMBAT_WIN,
+    //                 handle: () => {
+    //                     console.log("NOT_IMPLEMENTED")
+    //                 }
+    //             })
+    //         } else {
+    //             choice.add({
+    //                 action: ChoiceAction.COMBAT_RUN,
+    //                 handle: () => {
+    //                     console.log("NOT_IMPLEMENTED")
+    //                 }
+    //             })
+    //         }
 
-            player.onChoice.fire(PlayerEvent.COMBAT, choice);
-        })
-    }
+    //         player.onChoice.fire(PlayerEvent.COMBAT, choice);
+    //     })
+    // }
 
     get canPlayersWin() {
-        return this.playerSideCombatStrength >= this.monsterSideCombatStrength;
+        return this.playerSideCombatPower >= this.monsterSideCombatPower;
     }
 
-    get playerSideCombatStrength() {
-        let combatStrength = 0;
-        combatStrength += this.players.reduce((strength, player) => {    
+    get playerSideCombatPower() {
+        let power = 0;
+
+        for (const player of this.players) {
             // const playerStrength = this.monsterSide
                 // .reduce((sum, monster) => (sum + monster.combatStrength()), 0)
                 // TODO: CALCULATE MONSTER WEEKNESSES AND PLAYER WEEKNESSES
+            power += player.level;
+            power += player.bonuses;
+        }
 
-            strength += player.level;
-            strength += player.bonuses;
-            return strength;
-        }, 0);
-
-        combatStrength += this.playerSide.reduce((strength, card) => {
-            switch (true) {
-                case card instanceof Shot: {
-                    const shot = <Shot>card;
-                    strength += shot.bonus;
-                    break;
-                }
-                case card instanceof Monster: {
-                    const monster = <Monster>card;
-                    strength += monster.level;
-                }
+        for (const card of this.playerSide) {
+            if (card instanceof Monster) {
+                power += card.level;
             }
+            else if (card instanceof Shot) {
+                power += card.bonus;
+            }
+        }
 
-            return strength;
-        }, 0);
-
-        return combatStrength;
+        return power;
     }
 
-    get monsterSideCombatStrength() {
-        return this.monsterSide
-            .filter(c => c instanceof Monster)
-            .map(c => <Monster>c)        
-            .reduce((strength, monster) => {
-                strength += monster.level;
-                return strength;
-            }, 0)
+    get monsterSideCombatPower() {
+        let power = 0;
+
+        for (const card of this.monsterSide) {
+            if (card instanceof Monster) {
+                power += card.level;
+            }
+            else if (card instanceof Shot) {
+                power += card.bonus;
+            }
+
+        }
+        
+        return power;
     }
     get rewardLevels(): number {
         return this.monsterSide
